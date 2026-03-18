@@ -23,6 +23,14 @@ type OrgConfig = {
   facebookUrl:        string
 }
 
+function contrastText(hex: string): string {
+  const c = hex.replace('#', '')
+  const r = parseInt(c.slice(0, 2), 16)
+  const g = parseInt(c.slice(2, 4), 16)
+  const b = parseInt(c.slice(4, 6), 16)
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#1A1A1A' : '#ffffff'
+}
+
 export default function AdminPage() {
   const router  = useRouter()
   const params  = useParams()
@@ -124,6 +132,8 @@ export default function AdminPage() {
 
   const primary = config.primaryColor
   const accent  = config.accentColor
+  const onPrimary = contrastText(primary)
+  const onAccent  = contrastText(accent)
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", background: '#F7F2E8', minHeight: '100vh', color: '#2C2416' }}>
@@ -131,16 +141,16 @@ export default function AdminPage() {
 
       <header style={{ background: primary, padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginBottom: 4 }}>Admin Panel</div>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 600, color: '#FDFAF4', margin: 0 }}>{config.name || orgSlug}</h1>
+          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: `${onPrimary}aa`, marginBottom: 4 }}>Admin Panel</div>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 600, color: onPrimary, margin: 0 }}>{config.name || orgSlug}</h1>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <a href={`/org/${orgSlug}`} target="_blank" rel="noreferrer"
-            style={{ background: accent, color: 'white', fontSize: 12, fontWeight: 600, padding: '10px 20px', borderRadius: 8, textDecoration: 'none' }}>
+            style={{ background: accent, color: onAccent, fontSize: 12, fontWeight: 600, padding: '10px 20px', borderRadius: 8, textDecoration: 'none' }}>
             Preview Hub →
           </a>
           <button onClick={handleSignOut}
-            style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.5)', color: '#FFFFFF', fontSize: 11, fontWeight: 600, padding: '10px 16px', borderRadius: 8, cursor: 'pointer' }}>
+            style={{ background: 'transparent', border: `1px solid ${onPrimary}55`, color: onPrimary, fontSize: 11, fontWeight: 600, padding: '10px 16px', borderRadius: 8, cursor: 'pointer' }}>
             Sign Out
           </button>
         </div>
@@ -166,7 +176,7 @@ export default function AdminPage() {
                 setCopied(true)
                 setTimeout(() => setCopied(false), 2500)
               }}
-              style={{ background: copied ? '#5C6B3A' : accent, color: 'white', fontSize: 12, fontWeight: 600, padding: '11px 20px', borderRadius: 8, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background 0.2s' }}
+              style={{ background: copied ? '#5C6B3A' : accent, color: copied ? '#fff' : onAccent, fontSize: 12, fontWeight: 600, padding: '11px 20px', borderRadius: 8, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background 0.2s' }}
             >
               {copied ? 'Copied!' : 'Copy Link'}
             </button>
@@ -232,7 +242,7 @@ export default function AdminPage() {
             Preview Hub
           </a>
           <button onClick={handleSave} disabled={saving}
-            style={{ background: saving ? '#A89E8C' : accent, color: 'white', fontSize: 14, fontWeight: 600, padding: '12px 32px', borderRadius: 10, border: 'none', cursor: saving ? 'not-allowed' : 'pointer' }}>
+            style={{ background: saving ? '#A89E8C' : accent, color: saving ? '#fff' : onAccent, fontSize: 14, fontWeight: 600, padding: '12px 32px', borderRadius: 10, border: 'none', cursor: saving ? 'not-allowed' : 'pointer' }}>
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>

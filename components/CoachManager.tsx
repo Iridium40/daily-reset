@@ -12,7 +12,16 @@ interface Props {
   accent:  string
 }
 
+function contrastText(hex: string): string {
+  const c = hex.replace('#', '')
+  const r = parseInt(c.slice(0, 2), 16)
+  const g = parseInt(c.slice(2, 4), 16)
+  const b = parseInt(c.slice(4, 6), 16)
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#1A1A1A' : '#ffffff'
+}
+
 export default function CoachManager({ orgSlug, accent }: Props) {
+  const onAccent = contrastText(accent)
   const [coaches,  setCoaches]  = useState<Coach[]>([])
   const [invites,  setInvites]  = useState<Invite[]>([])
   const [email,    setEmail]    = useState('')
@@ -63,10 +72,10 @@ export default function CoachManager({ orgSlug, accent }: Props) {
   return (
     <div style={{ background: '#FDFAF4', border: '1px solid #E2D9C5', borderRadius: 16, padding: '28px 28px', marginBottom: 20, boxShadow: '0 2px 8px rgba(44,36,22,0.06)' }}>
       <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 600, color: '#2C2416', marginBottom: 6 }}>
-        Coach Team
+        Invite Coach Organization
       </h2>
       <p style={{ fontSize: 13, color: '#7A6E5C', marginBottom: 24 }}>
-        Invite downstream coaches to get their own admin access for this organization.
+        Invite other coaches to create their own organization.
       </p>
 
       {/* Invite form */}
@@ -77,7 +86,7 @@ export default function CoachManager({ orgSlug, accent }: Props) {
           style={{ flex: 1, minWidth: 200, padding: '10px 14px', borderRadius: 8, border: '1px solid #E2D9C5', background: '#F7F2E8', fontSize: 14, color: '#2C2416', fontFamily: 'inherit', outline: 'none' }}
         />
         <button type="submit" disabled={sending}
-          style={{ background: sending ? '#A89E8C' : accent, color: 'white', fontSize: 13, fontWeight: 600, padding: '10px 24px', borderRadius: 8, border: 'none', cursor: sending ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' }}>
+          style={{ background: sending ? '#A89E8C' : accent, color: sending ? '#fff' : onAccent, fontSize: 13, fontWeight: 600, padding: '10px 24px', borderRadius: 8, border: 'none', cursor: sending ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' }}>
           {sending ? 'Sending...' : 'Send Invite'}
         </button>
       </form>
@@ -89,25 +98,6 @@ export default function CoachManager({ orgSlug, accent }: Props) {
         <p style={{ fontSize: 13, color: '#A89E8C' }}>Loading...</p>
       ) : (
         <>
-          {/* Active coaches */}
-          {coaches.length > 0 && (
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7A6E5C', marginBottom: 10 }}>Active Coaches ({coaches.length})</div>
-              {coaches.map(c => (
-                <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 8, background: '#F7F2E8', marginBottom: 6 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
-                    {(c.name || c.email)[0].toUpperCase()}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, fontSize: 14, color: '#2C2416' }}>{c.name || '—'}</div>
-                    <div style={{ fontSize: 12, color: '#7A6E5C' }}>{c.email}</div>
-                  </div>
-                  <div style={{ fontSize: 11, color: '#A89E8C' }}>Joined {new Date(c.createdAt).toLocaleDateString()}</div>
-                </div>
-              ))}
-            </div>
-          )}
-
           {/* Pending invites */}
           {invites.length > 0 && (
             <div>
@@ -130,9 +120,9 @@ export default function CoachManager({ orgSlug, accent }: Props) {
             </div>
           )}
 
-          {coaches.length === 0 && invites.length === 0 && (
+          {invites.length === 0 && (
             <p style={{ fontSize: 13, color: '#A89E8C', textAlign: 'center', padding: '16px 0' }}>
-              No coaches yet. Send an invite above to add your first coach.
+              No pending invites. Send an invite above to get started.
             </p>
           )}
         </>
