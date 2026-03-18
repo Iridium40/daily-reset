@@ -153,7 +153,7 @@ export default function SuperAdminPage() {
                     placeholder={f.placeholder}
                   />
                   {f.key === 'slug' && newOrg.slug && (
-                    <div style={{ fontSize: 11, color: '#8A9D5C', marginTop: 4 }}>Hub URL: {baseUrl}/hub/{newOrg.slug}</div>
+                    <div style={{ fontSize: 11, color: '#8A9D5C', marginTop: 4 }}>Hub URL: {baseUrl}/org/{newOrg.slug}</div>
                   )}
                 </div>
               ))}
@@ -179,10 +179,10 @@ export default function SuperAdminPage() {
               {org.logoUrl && <img src={org.logoUrl} alt={org.name} style={{ height: 36, width: 36, objectFit: 'contain', borderRadius: 6 }} />}
               <div style={{ flex: 1, minWidth: 160 }}>
                 <div style={{ fontWeight: 600, fontSize: 15, color: '#2C2416' }}>{org.name}</div>
-                <div style={{ fontSize: 12, color: '#A89E8C', fontFamily: 'monospace' }}>/hub/{org.slug}</div>
+                <div style={{ fontSize: 12, color: '#A89E8C', fontFamily: 'monospace' }}>/org/{org.slug}</div>
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <button onClick={() => copyToClipboard(`${baseUrl}/hub/${org.slug}`, `hub-${org.id}`)}
+                <button onClick={() => copyToClipboard(`${baseUrl}/org/${org.slug}`, `hub-${org.id}`)}
                   style={styles.smallBtn('#5C6B3A')}>
                   {copied === `hub-${org.id}` ? '✓ Copied!' : '📋 Copy Hub URL'}
                 </button>
@@ -190,7 +190,7 @@ export default function SuperAdminPage() {
                   style={styles.smallBtn('#7A6E5C')}>
                   {copied === `admin-${org.id}` ? '✓ Copied!' : '🔑 Copy Admin URL'}
                 </button>
-                <a href={`/hub/${org.slug}`} target="_blank" rel="noreferrer" style={{ ...styles.smallBtn('#3E4A27'), textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+                <a href={`/org/${org.slug}`} target="_blank" rel="noreferrer" style={{ ...styles.smallBtn('#3E4A27'), textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
                   👁 Preview
                 </a>
                 <a href={`/admin/${org.slug}`} target="_blank" rel="noreferrer" style={{ ...styles.smallBtn('#C45A1A'), textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>

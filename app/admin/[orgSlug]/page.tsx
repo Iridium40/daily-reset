@@ -117,16 +117,16 @@ export default function AdminPage() {
 
       <header style={{ background: primary, padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8A9D5C', marginBottom: 4 }}>Admin Panel</div>
+          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginBottom: 4 }}>Admin Panel</div>
           <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 600, color: '#FDFAF4', margin: 0 }}>{config.name || orgSlug}</h1>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <a href={`/hub/${orgSlug}`} target="_blank" rel="noreferrer"
+          <a href={`/org/${orgSlug}`} target="_blank" rel="noreferrer"
             style={{ background: accent, color: 'white', fontSize: 12, fontWeight: 600, padding: '10px 20px', borderRadius: 8, textDecoration: 'none' }}>
             Preview Hub →
           </a>
           <button onClick={handleSignOut}
-            style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#A89E8C', fontSize: 11, fontWeight: 600, padding: '10px 16px', borderRadius: 8, cursor: 'pointer' }}>
+            style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.5)', color: '#FFFFFF', fontSize: 11, fontWeight: 600, padding: '10px 16px', borderRadius: 8, cursor: 'pointer' }}>
             Sign Out
           </button>
         </div>
@@ -198,7 +198,7 @@ export default function AdminPage() {
         <CoachManager orgSlug={orgSlug} accent={accent} />
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 32 }}>
-          <a href={`/hub/${orgSlug}`} target="_blank" rel="noreferrer"
+          <a href={`/org/${orgSlug}`} target="_blank" rel="noreferrer"
             style={{ fontSize: 13, fontWeight: 600, color: accent, padding: '12px 24px', border: `1px solid ${accent}`, borderRadius: 10, textDecoration: 'none' }}>
             Preview Hub
           </a>
