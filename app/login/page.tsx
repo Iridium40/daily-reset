@@ -56,9 +56,13 @@ export default function LoginPage() {
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;600&display=swap');`}</style>
 
       <div style={{ background: '#FDFAF4', border: '1px solid #E2D9C5', borderRadius: 20, padding: '48px 40px', width: '100%', maxWidth: 420, boxShadow: '0 8px 40px rgba(44,36,22,0.12)' }}>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 32, fontWeight: 600, color: '#2C2416', marginBottom: 4, textAlign: 'center' }}>
-          The Daily Metabolic Reboot
-        </h1>
+        <div style={{ textAlign: 'center', marginBottom: 8 }}>
+          <img
+            src="https://tiggbprqgezztvcakpce.supabase.co/storage/v1/object/public/branding/Continuous%20Loop%20Emblem%20of%20Metabolic%20Renewal.png"
+            alt="The Daily Metabolic Reboot"
+            style={{ width: 160, height: 160, objectFit: 'contain', margin: '0 auto' }}
+          />
+        </div>
         <p style={{ fontSize: 13, color: '#7A6E5C', textAlign: 'center', marginBottom: 32 }}>Admin Sign In</p>
 
         {error && (
