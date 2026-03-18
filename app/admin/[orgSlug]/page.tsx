@@ -135,9 +135,16 @@ export default function AdminPage() {
   const onPrimary = contrastText(primary)
   const onAccent  = contrastText(accent)
 
+  const DEFAULTS = {
+    name: 'Client Hub',
+    primaryColor: '#3E4A27',
+    accentColor: '#C45A1A',
+    welcomeMessage: "Watch the start video, grab the Zoom links, get your essentials, and use the Daily videos to stay consistent. Keep it simple. Don\u2019t overthink it. Just execute.",
+  }
+
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", background: '#F7F2E8', minHeight: '100vh', color: '#2C2416' }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;600&display=swap');`}</style>
+      <style dangerouslySetInnerHTML={{ __html: `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400..600&display=swap');` }} />
 
       <header style={{ background: primary, padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
@@ -202,6 +209,13 @@ export default function AdminPage() {
               </div>
             </Field>
           </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
+            <button
+              onClick={() => setConfig({ ...config, name: DEFAULTS.name, primaryColor: DEFAULTS.primaryColor, accentColor: DEFAULTS.accentColor })}
+              style={{ fontSize: 11, fontWeight: 600, color: '#7A6E5C', background: 'none', border: '1px solid #E2D9C5', padding: '6px 14px', borderRadius: 6, cursor: 'pointer' }}>
+              Reset to Default
+            </button>
+          </div>
         </Section>
 
         <Section title="Welcome Message">
@@ -209,6 +223,13 @@ export default function AdminPage() {
             <textarea style={{ ...styles.input, minHeight: 100, resize: 'vertical' }} value={config.welcomeMessage} onChange={e => setConfig({ ...config, welcomeMessage: e.target.value })}
               placeholder="Welcome to our community! Watch the start video, grab the Zoom link, and use the Daily videos to stay consistent..." />
           </Field>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4 }}>
+            <button
+              onClick={() => setConfig({ ...config, welcomeMessage: DEFAULTS.welcomeMessage })}
+              style={{ fontSize: 11, fontWeight: 600, color: '#7A6E5C', background: 'none', border: '1px solid #E2D9C5', padding: '6px 14px', borderRadius: 6, cursor: 'pointer' }}>
+              Reset to Default
+            </button>
+          </div>
         </Section>
 
         <Section title="Community Zoom">

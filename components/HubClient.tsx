@@ -122,12 +122,13 @@ export default function HubClient({ org }: { org: Org }) {
   const accent  = org.accentColor  || '#C45A1A'
   const onPrimary = contrastText(primary)
   const onAccent  = contrastText(accent)
-  const zoomLink = org.zoomLink    || 'https://zoom.us/j/8156301595'
-  const zoomTime = org.zoomSchedule  || '7pm CST · 8pm EST'
-  const zoomId   = org.zoomMeetingId || '815 630 1595'
-  const fbUrl    = org.facebookUrl || 'https://www.facebook.com/groups/4049870241960036'
+  const zoomLink = org.zoomLink
+  const zoomTime = org.zoomSchedule
+  const zoomId   = org.zoomMeetingId
+  const fbUrl    = org.facebookUrl
 
-  const onboard    = useServerChecklist({ orgId: org.id, listKey: 'onboard',    total: 5 })
+  const onboardTotal = 4 + (fbUrl ? 1 : 0)
+  const onboard    = useServerChecklist({ orgId: org.id, listKey: 'onboard',    total: onboardTotal })
   const essentials = useServerChecklist({ orgId: org.id, listKey: 'essentials', total: 3 })
 
   const onboardItems = [
@@ -135,7 +136,7 @@ export default function HubClient({ org }: { org: Org }) {
     { label: 'Write your WHYs',                 sub: 'Take a photo holding it and send to your coach' },
     { label: 'Take before photos',              sub: 'Front, back, and side — you\'ll want these later' },
     { label: 'Download the Optavia app',        sub: 'Recipes, reminders, and tracking',             link: { href:'https://apps.apple.com/us/app/optavia/id1477201061', text:'Get App' } },
-    { label: 'Join the private Facebook group', sub: 'Introduce yourself so we can support you',     link: { href:fbUrl, text:'Join →' } },
+    ...(fbUrl ? [{ label: 'Join the private Facebook group', sub: 'Introduce yourself so we can support you', link: { href:fbUrl, text:'Join →' } }] : []),
   ]
   const essItems = [
     { emoji: '🥩', label: 'Food Scale',             sub: 'To weigh lean protein — essential.' },
@@ -146,7 +147,7 @@ export default function HubClient({ org }: { org: Org }) {
   return (
     <div style={{ fontFamily:"'DM Sans',sans-serif", background:'#F5F1EA', minHeight:'100vh', color:'#2C2416' }}>
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400..700;1,400..700&family=DM+Sans:wght@300..600&display=swap');
         *{box-sizing:border-box} a{transition:opacity 0.15s} a:hover{opacity:0.85}
         @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
         main>*{animation:fadeUp 0.4s ease both}
@@ -201,7 +202,7 @@ export default function HubClient({ org }: { org: Org }) {
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
           <div style={{ padding:'20px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #F0EBE1' }}>
             <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontWeight:700, fontSize:22, color:primary, margin:0, fontStyle:'italic' }}>Before You Start</h2>
-            {!onboard.loading && <span style={{ fontSize:14, color:'#888' }}><strong style={{ color:primary }}>{onboard.doneCount}</strong> / 5 done</span>}
+            {!onboard.loading && <span style={{ fontSize:14, color:'#888' }}><strong style={{ color:primary }}>{onboard.doneCount}</strong> / {onboardTotal} done</span>}
           </div>
           {!onboard.loading && <>
             {onboard.allDone && <CompletionBanner label="Onboarding complete! You're ready to go." onReset={onboard.reset} color={primary} textColor={onPrimary} />}
@@ -230,22 +231,24 @@ export default function HubClient({ org }: { org: Org }) {
           </>}
         </div>
 
+        {zoomLink && (<>
         <SectionDivider label="Community Zoom" />
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
           <div style={{ padding:'28px 28px 24px' }}>
-            <div style={{ fontSize:10, fontWeight:600, letterSpacing:'0.16em', textTransform:'uppercase', color:'#888', marginBottom:8 }}>Every Monday</div>
+            {zoomTime && <div style={{ fontSize:10, fontWeight:600, letterSpacing:'0.16em', textTransform:'uppercase', color:'#888', marginBottom:8 }}>Every Monday</div>}
             <div style={{ fontWeight:700, fontSize:20, color:primary, marginBottom:6 }}>Client Community Zoom</div>
-            <div style={{ fontSize:15, color:primary, marginBottom:2 }}>{zoomTime}</div>
-            <div style={{ fontSize:13, color:'#888', marginBottom:12 }}>weekly</div>
-            <span style={{ display:'inline-block', fontSize:12, color:primary, background:'#F5F1EA', padding:'5px 12px', borderRadius:6, fontWeight:500 }}>ID: {zoomId}</span>
+            {zoomTime && <div style={{ fontSize:15, color:primary, marginBottom:2 }}>{zoomTime}</div>}
+            {zoomTime && <div style={{ fontSize:13, color:'#888', marginBottom:12 }}>weekly</div>}
+            {zoomId && <span style={{ display:'inline-block', fontSize:12, color:primary, background:'#F5F1EA', padding:'5px 12px', borderRadius:6, fontWeight:500 }}>ID: {zoomId}</span>}
           </div>
           <div style={{ padding:'0 28px 28px', display:'flex', flexDirection:'column', gap:10 }}>
             <a href={zoomLink} target="_blank" rel="noreferrer" style={{ background:primary, color:onPrimary, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block' }}>Join Zoom</a>
-            {(org.zoomRecordingsUrl) && (
+            {org.zoomRecordingsUrl && (
               <a href={org.zoomRecordingsUrl} target="_blank" rel="noreferrer" style={{ background:'transparent', color:primary, border:`1px solid ${primary}33`, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block' }}>Past Recordings</a>
             )}
           </div>
         </div>
+        </>)}
 
         <SectionDivider label="Reference Guides" id="mm-guides" />
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>

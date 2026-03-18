@@ -47,7 +47,7 @@ const h4Style: React.CSSProperties = { fontSize: 13, fontWeight: 700, letterSpac
 export default function TermsPage() {
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", background: green.pale, color: text.dark, lineHeight: 1.7, fontSize: 15 }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap'); *, *::before, *::after { box-sizing: border-box; } a { color: ${green.primary}; }`}</style>
+      <style dangerouslySetInnerHTML={{ __html: `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..700&family=DM+Sans:wght@300..600&display=swap'); *, *::before, *::after { box-sizing: border-box; } a { color: ${green.primary}; }` }} />
 
       {/* Header */}
       <header style={{ background: `linear-gradient(135deg, ${green.dark} 0%, ${green.primary} 60%, ${green.accent} 100%)`, padding: '48px 32px 40px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
