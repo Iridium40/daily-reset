@@ -38,6 +38,8 @@ export default function AdminPage() {
   const [error,  setError]    = useState('')
   const [authLoading, setAuthLoading] = useState(true)
 
+  const [authError, setAuthError] = useState('')
+
   // Auth guard
   useEffect(() => {
     async function checkAuth() {
@@ -45,7 +47,11 @@ export default function AdminPage() {
       if (!authUser) { router.push('/login'); return }
 
       const res = await fetch('/api/auth/me')
-      if (!res.ok) { router.push('/login'); return }
+      if (!res.ok) {
+        setAuthError('Could not load your profile. The server may still be connecting to the database — please refresh in a moment.')
+        setAuthLoading(false)
+        return
+      }
       const appUser = await res.json()
       setUser(appUser)
 
@@ -105,6 +111,16 @@ export default function AdminPage() {
   }
 
   if (authLoading || !config) {
+    if (authError) return (
+      <div style={{ ...styles.loading, flexDirection: 'column', gap: 16 }}>
+        <div style={{ background: '#FDE8E8', border: '1px solid #C43B3B', borderRadius: 10, padding: '16px 24px', maxWidth: 500, textAlign: 'center', fontSize: 14, color: '#C43B3B' }}>
+          {authError}
+        </div>
+        <button onClick={() => window.location.reload()} style={{ background: '#C45A1A', color: 'white', fontSize: 13, fontWeight: 600, padding: '10px 24px', borderRadius: 8, border: 'none', cursor: 'pointer' }}>
+          Retry
+        </button>
+      </div>
+    )
     return <div style={styles.loading}>Loading...</div>
   }
 

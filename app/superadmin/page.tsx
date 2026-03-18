@@ -32,13 +32,19 @@ export default function SuperAdminPage() {
   const [error,    setError]    = useState('')
   const [authLoading, setAuthLoading] = useState(true)
 
+  const [authError, setAuthError] = useState('')
+
   useEffect(() => {
     async function checkAuth() {
       const { data: { user: authUser } } = await supabase.auth.getUser()
       if (!authUser) { router.push('/login'); return }
 
       const res = await fetch('/api/auth/me')
-      if (!res.ok) { router.push('/login'); return }
+      if (!res.ok) {
+        setAuthError('Could not load your profile. The server may still be connecting to the database — please refresh in a moment.')
+        setAuthLoading(false)
+        return
+      }
       const appUser = await res.json()
       setUser(appUser)
 
@@ -100,6 +106,17 @@ export default function SuperAdminPage() {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
 
   if (authLoading) return <div style={styles.loading}>Loading...</div>
+
+  if (authError) return (
+    <div style={{ ...styles.loading, flexDirection: 'column', gap: 16 }}>
+      <div style={{ background: '#FDE8E8', border: '1px solid #C43B3B', borderRadius: 10, padding: '16px 24px', maxWidth: 500, textAlign: 'center', fontSize: 14, color: '#C43B3B' }}>
+        {authError}
+      </div>
+      <button onClick={() => window.location.reload()} style={{ background: '#C45A1A', color: 'white', fontSize: 13, fontWeight: 600, padding: '10px 24px', borderRadius: 8, border: 'none', cursor: 'pointer' }}>
+        Retry
+      </button>
+    </div>
+  )
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", background: '#F7F2E8', minHeight: '100vh', color: '#2C2416' }}>
