@@ -4,24 +4,24 @@ export const metadata: Metadata = {
   title: 'Terms of Service & Disclosures — My Metabolic Reboot',
 }
 
-const green = {
-  primary: '#00A651',
-  dark: '#008C45',
-  accent: '#7CB342',
-  light: '#E8F5E9',
-  pale: '#F4FAF6',
+const brand = {
+  primary: '#3E4A27',
+  dark: '#2C2416',
+  accent: '#C45A1A',
+  light: '#F5F1EA',
+  pale: '#F7F2E8',
 }
-const text = { dark: '#1A2E1F', mid: '#3D5A45', muted: '#6B8A72' }
-const border = '#C8E6C9'
+const text = { dark: '#2C2416', mid: '#7A6E5C', muted: '#A89E8C' }
+const border = '#E2D9C5'
 
 function SectionBlock({ id, num, title, pill, children }: { id: string; num: string; title: string; pill?: { label: string; warn?: boolean }; children: React.ReactNode }) {
   return (
     <div id={id} style={{ background: '#fff', border: `1px solid ${border}`, borderRadius: 12, padding: '36px 40px', marginBottom: 24, scrollMarginTop: 24 }}>
-      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: green.primary, opacity: 0.7, marginBottom: 4 }}>Section {num}</div>
-      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: text.dark, marginBottom: 20, paddingBottom: 14, borderBottom: `2px solid ${green.light}` }}>
+      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: brand.accent, opacity: 0.7, marginBottom: 4 }}>Section {num}</div>
+      <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, fontWeight: 700, color: text.dark, marginBottom: 20, paddingBottom: 14, borderBottom: `2px solid ${brand.light}` }}>
         {title}
         {pill && (
-          <span style={{ display: 'inline-block', fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', background: pill.warn ? '#F9A825' : green.primary, color: '#fff', padding: '2px 8px', borderRadius: 4, verticalAlign: 'middle', marginLeft: 10, position: 'relative', top: -2 }}>
+          <span style={{ display: 'inline-block', fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', background: pill.warn ? '#F9A825' : brand.accent, color: '#fff', padding: '2px 8px', borderRadius: 4, verticalAlign: 'middle', marginLeft: 10, position: 'relative', top: -2 }}>
             {pill.label}
           </span>
         )}
@@ -33,7 +33,7 @@ function SectionBlock({ id, num, title, pill, children }: { id: string; num: str
 
 function HighlightBox({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ background: green.light, border: `1px solid ${border}`, borderLeft: `4px solid ${green.primary}`, borderRadius: 8, padding: '16px 20px', margin: '18px 0', fontSize: 14, color: text.mid }}>
+    <div style={{ background: brand.light, border: `1px solid ${border}`, borderLeft: `4px solid ${brand.accent}`, borderRadius: 8, padding: '16px 20px', margin: '18px 0', fontSize: 14, color: text.mid }}>
       {children}
     </div>
   )
@@ -42,17 +42,17 @@ function HighlightBox({ children }: { children: React.ReactNode }) {
 const pStyle: React.CSSProperties = { marginBottom: 14, color: text.mid, lineHeight: 1.7, fontSize: 15 }
 const ulStyle: React.CSSProperties = { paddingLeft: 20, marginBottom: 14, color: text.mid }
 const liStyle: React.CSSProperties = { marginBottom: 6, fontSize: 14, lineHeight: 1.7 }
-const h4Style: React.CSSProperties = { fontSize: 13, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase', color: green.dark, margin: '22px 0 8px' }
+const h4Style: React.CSSProperties = { fontSize: 13, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase', color: brand.primary, margin: '22px 0 8px' }
 
 export default function TermsPage() {
   return (
-    <div style={{ fontFamily: "'DM Sans', sans-serif", background: green.pale, color: text.dark, lineHeight: 1.7, fontSize: 15 }}>
-      <style dangerouslySetInnerHTML={{ __html: `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..700&family=DM+Sans:wght@300..600&display=swap'); *, *::before, *::after { box-sizing: border-box; } a { color: ${green.primary}; }` }} />
+    <div style={{ fontFamily: "'DM Sans', sans-serif", background: brand.pale, color: text.dark, lineHeight: 1.7, fontSize: 15 }}>
+      <style dangerouslySetInnerHTML={{ __html: `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400..600&display=swap'); *, *::before, *::after { box-sizing: border-box; } a { color: ${brand.accent}; }` }} />
 
       {/* Header */}
-      <header style={{ background: `linear-gradient(135deg, ${green.dark} 0%, ${green.primary} 60%, ${green.accent} 100%)`, padding: '48px 32px 40px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <header style={{ background: `linear-gradient(135deg, ${brand.dark} 0%, ${brand.primary} 60%, ${brand.accent} 100%)`, padding: '48px 32px 40px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>Legal Documents</div>
-        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(26px, 5vw, 40px)', fontWeight: 700, color: '#fff', marginBottom: 8 }}>Terms of Service &amp; Disclosures</h1>
+        <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(26px, 5vw, 40px)', fontWeight: 700, color: '#fff', marginBottom: 8 }}>Terms of Service &amp; Disclosures</h1>
         <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', maxWidth: 500, margin: '0 auto' }}>My Metabolic Reboot — Independent Coach Business Management Platform</p>
         <span style={{ display: 'inline-block', marginTop: 16, background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 20, padding: '4px 16px', fontSize: 11, color: 'rgba(255,255,255,0.8)', letterSpacing: 0.5 }}>Last Updated: March 17, 2026</span>
       </header>
@@ -69,7 +69,7 @@ export default function TermsPage() {
 
         {/* Table of Contents */}
         <div style={{ background: '#fff', border: `1px solid ${border}`, borderRadius: 12, padding: '28px 32px', marginBottom: 48 }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 600, color: green.dark, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>📋 Contents</div>
+          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 15, fontWeight: 600, color: brand.primary, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>📋 Contents</div>
           <ol style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px', padding: 0 }}>
             {[
               ['#independence', 'Independent Tool Disclosure'],
@@ -87,7 +87,7 @@ export default function TermsPage() {
             ].map(([href, label], i) => (
               <li key={href}>
                 <a href={href} style={{ textDecoration: 'none', color: text.mid, fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: green.primary, opacity: 0.7, minWidth: 20 }}>{String(i + 1).padStart(2, '0')}</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: brand.accent, opacity: 0.7, minWidth: 20 }}>{String(i + 1).padStart(2, '0')}</span>
                   {label}
                 </a>
               </li>
@@ -96,10 +96,10 @@ export default function TermsPage() {
         </div>
 
         {/* Section 1: Independence Disclosure */}
-        <div id="independence" style={{ background: 'linear-gradient(135deg, #F4FAF6 0%, #E8F5E9 100%)', border: `2px solid ${green.primary}`, borderRadius: 14, padding: '36px 36px 32px', marginBottom: 24, position: 'relative' }}>
-          <div style={{ position: 'absolute', top: -12, left: 24, background: green.primary, color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: 2, padding: '3px 12px', borderRadius: 4 }}>⚠ IMPORTANT DISCLOSURE</div>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: green.primary, opacity: 0.7, marginBottom: 4 }}>Section 01</div>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: text.dark, marginBottom: 16 }}>Independent Tool Disclosure</div>
+        <div id="independence" style={{ background: `linear-gradient(135deg, #FDFAF4 0%, ${brand.light} 100%)`, border: `2px solid ${brand.primary}`, borderRadius: 14, padding: '36px 36px 32px', marginBottom: 24, position: 'relative' }}>
+          <div style={{ position: 'absolute', top: -12, left: 24, background: brand.accent, color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: 2, padding: '3px 12px', borderRadius: 4 }}>⚠ IMPORTANT DISCLOSURE</div>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: brand.accent, opacity: 0.7, marginBottom: 4 }}>Section 01</div>
+          <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 700, color: text.dark, marginBottom: 16 }}>Independent Tool Disclosure</div>
 
           <p style={pStyle}><strong style={{ color: text.dark }}>This application ("My Metabolic Reboot," "the App," "the Platform," or "the Service") is an independently created, privately operated business management tool.</strong> It is designed to assist individual OPTAVIA health coaches in organizing their personal coaching practices.</p>
 
@@ -112,7 +112,7 @@ export default function TermsPage() {
           </ul>
 
           <HighlightBox>
-            <strong style={{ color: green.dark }}>Trademark Notice:</strong> OPTAVIA® and related marks are registered trademarks of Medifast, Inc. Their use in this application is solely for nominative reference purposes (to describe the business context of the coaching profession) and does not imply any affiliation, sponsorship, or endorsement.
+            <strong style={{ color: brand.primary }}>Trademark Notice:</strong> OPTAVIA® and related marks are registered trademarks of Medifast, Inc. Their use in this application is solely for nominative reference purposes (to describe the business context of the coaching profession) and does not imply any affiliation, sponsorship, or endorsement.
           </HighlightBox>
 
           <p style={pStyle}>If you are an OPTAVIA coach, your primary compliance obligations remain with OPTAVIA LLC. Nothing in this application supersedes, modifies, or conflicts with your obligations under your OPTAVIA Independent Coach Agreement. You are solely responsible for ensuring that your use of this tool complies with all applicable OPTAVIA policies, guidelines, and your coach agreement.</p>
@@ -148,7 +148,7 @@ export default function TermsPage() {
             <li style={liStyle}>Calendar and scheduling management</li>
           </ul>
           <HighlightBox>
-            <strong style={{ color: green.dark }}>No Guarantee of Business Results:</strong> The tools, scripts, and resources provided in this App are offered as organizational aids only. We make no representation or warranty that use of this App will result in any specific business outcome, income level, or client result.
+            <strong style={{ color: brand.primary }}>No Guarantee of Business Results:</strong> The tools, scripts, and resources provided in this App are offered as organizational aids only. We make no representation or warranty that use of this App will result in any specific business outcome, income level, or client result.
           </HighlightBox>
           <p style={pStyle}>We reserve the right to modify, suspend, or discontinue the Service (or any portion thereof) at any time, with or without notice.</p>
         </SectionBlock>
@@ -231,7 +231,7 @@ export default function TermsPage() {
         <SectionBlock id="contact" num="12" title="Contact Information">
           <p style={pStyle}>If you have questions about these Terms or this App&apos;s independence from OPTAVIA, please contact us:</p>
           <HighlightBox>
-            <strong style={{ color: green.dark }}>My Metabolic Reboot</strong><br />
+            <strong style={{ color: brand.primary }}>My Metabolic Reboot</strong><br />
             Operated by Rogers Optimal Health<br />
             Covington, Louisiana<br />
             <br />
