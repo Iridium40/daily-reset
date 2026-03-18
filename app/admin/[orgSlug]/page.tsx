@@ -23,6 +23,7 @@ type ZoomCall = {
   id: string
   title: string
   zoomLink: string
+  passcode: string
   schedule: string
   meetingId: string
   recordingsUrl: string
@@ -94,6 +95,7 @@ export default function AdminPage() {
           id: zc.id,
           title: zc.title || '',
           zoomLink: zc.zoomLink || '',
+          passcode: zc.passcode || '',
           schedule: zc.schedule || '',
           meetingId: zc.meetingId || '',
           recordingsUrl: zc.recordingsUrl || '',
@@ -119,20 +121,20 @@ export default function AdminPage() {
           await fetch('/api/zoom-calls', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orgSlug, title: zc.title, zoomLink: zc.zoomLink, schedule: zc.schedule, meetingId: zc.meetingId, recordingsUrl: zc.recordingsUrl }),
+            body: JSON.stringify({ orgSlug, title: zc.title, zoomLink: zc.zoomLink, passcode: zc.passcode, schedule: zc.schedule, meetingId: zc.meetingId, recordingsUrl: zc.recordingsUrl }),
           })
         } else {
           await fetch('/api/zoom-calls', {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: zc.id, orgSlug, title: zc.title, zoomLink: zc.zoomLink, schedule: zc.schedule, meetingId: zc.meetingId, recordingsUrl: zc.recordingsUrl }),
+            body: JSON.stringify({ id: zc.id, orgSlug, title: zc.title, zoomLink: zc.zoomLink, passcode: zc.passcode, schedule: zc.schedule, meetingId: zc.meetingId, recordingsUrl: zc.recordingsUrl }),
           })
         }
       }
 
       const refreshed = await fetch(`/api/zoom-calls?orgSlug=${orgSlug}`).then(r => r.json())
       setZoomCalls(refreshed.map((zc: any) => ({
-        id: zc.id, title: zc.title || '', zoomLink: zc.zoomLink || '',
+        id: zc.id, title: zc.title || '', zoomLink: zc.zoomLink || '', passcode: zc.passcode || '',
         schedule: zc.schedule || '', meetingId: zc.meetingId || '', recordingsUrl: zc.recordingsUrl || '',
       })))
 
@@ -163,7 +165,7 @@ export default function AdminPage() {
   }
 
   function handleAddZoomCall() {
-    setZoomCalls(prev => [...prev, { id: `new-${Date.now()}`, title: '', zoomLink: '', schedule: '', meetingId: '', recordingsUrl: '' }])
+    setZoomCalls(prev => [...prev, { id: `new-${Date.now()}`, title: '', zoomLink: '', passcode: '', schedule: '', meetingId: '', recordingsUrl: '' }])
   }
 
   function handleZoomCallChange(id: string, field: keyof ZoomCall, value: string) {
@@ -306,13 +308,16 @@ export default function AdminPage() {
                 <input style={styles.input} value={zc.zoomLink} onChange={e => handleZoomCallChange(zc.id, 'zoomLink', e.target.value)} placeholder="https://zoom.us/j/..." />
               </Field>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <Field label="Schedule Text">
-                  <input style={styles.input} value={zc.schedule} onChange={e => handleZoomCallChange(zc.id, 'schedule', e.target.value)} placeholder="Every Monday 7pm CST · 8pm EST" />
-                </Field>
                 <Field label="Meeting ID">
                   <input style={styles.input} value={zc.meetingId} onChange={e => handleZoomCallChange(zc.id, 'meetingId', e.target.value)} placeholder="815 630 1595" />
                 </Field>
+                <Field label="Passcode">
+                  <input style={styles.input} value={zc.passcode} onChange={e => handleZoomCallChange(zc.id, 'passcode', e.target.value)} placeholder="abc123" />
+                </Field>
               </div>
+              <Field label="Schedule Text">
+                <input style={styles.input} value={zc.schedule} onChange={e => handleZoomCallChange(zc.id, 'schedule', e.target.value)} placeholder="Every Monday 7pm CST · 8pm EST" />
+              </Field>
               <Field label="Past Recordings URL">
                 <input style={styles.input} value={zc.recordingsUrl} onChange={e => handleZoomCallChange(zc.id, 'recordingsUrl', e.target.value)} placeholder="https://docs.google.com/document/d/..." />
               </Field>

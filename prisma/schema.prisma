@@ -71,6 +71,7 @@ model ZoomCall {
   orgId         String
   title         String
   zoomLink      String
+  passcode      String?
   schedule      String?
   meetingId     String?
   recordingsUrl String?

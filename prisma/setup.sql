@@ -70,6 +70,7 @@ CREATE TABLE "zoom_calls" (
   "orgId"           TEXT NOT NULL,
   "title"           TEXT NOT NULL,
   "zoomLink"        TEXT NOT NULL,
+  "passcode"        TEXT,
   "schedule"        TEXT,
   "meetingId"       TEXT,
   "recordingsUrl"   TEXT,

@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { orgSlug, title, zoomLink, schedule, meetingId, recordingsUrl } = body
+  const { orgSlug, title, zoomLink, passcode, schedule, meetingId, recordingsUrl } = body
   if (!orgSlug || !title || !zoomLink) {
     return NextResponse.json({ error: 'orgSlug, title, and zoomLink are required' }, { status: 400 })
   }
@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
       orgId: org.id,
       title,
       zoomLink,
+      passcode: passcode || null,
       schedule: schedule || null,
       meetingId: meetingId || null,
       recordingsUrl: recordingsUrl || null,
@@ -57,7 +58,7 @@ export async function PATCH(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { id, orgSlug, title, zoomLink, schedule, meetingId, recordingsUrl } = body
+  const { id, orgSlug, title, zoomLink, passcode, schedule, meetingId, recordingsUrl } = body
   if (!id || !orgSlug) return NextResponse.json({ error: 'id and orgSlug required' }, { status: 400 })
 
   const isSuperAdmin = user.role === 'SUPER_ADMIN'
@@ -69,6 +70,7 @@ export async function PATCH(req: NextRequest) {
     data: {
       ...(title !== undefined && { title }),
       ...(zoomLink !== undefined && { zoomLink }),
+      ...(passcode !== undefined && { passcode: passcode || null }),
       ...(schedule !== undefined && { schedule: schedule || null }),
       ...(meetingId !== undefined && { meetingId: meetingId || null }),
       ...(recordingsUrl !== undefined && { recordingsUrl: recordingsUrl || null }),

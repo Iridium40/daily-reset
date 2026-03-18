@@ -12,7 +12,7 @@ function contrastText(hex: string): string {
 }
 
 export type ZoomCall = {
-  id: string; title: string; zoomLink: string
+  id: string; title: string; zoomLink: string; passcode: string | null
   schedule: string | null; meetingId: string | null; recordingsUrl: string | null
 }
 
@@ -240,7 +240,10 @@ export default function HubClient({ org }: { org: Org }) {
             <div style={{ padding:'28px 28px 24px' }}>
               <div style={{ fontWeight:700, fontSize:20, color:primary, marginBottom:6 }}>{zc.title}</div>
               {zc.schedule && <div style={{ fontSize:15, color:primary, marginBottom:2 }}>{zc.schedule}</div>}
-              {zc.meetingId && <span style={{ display:'inline-block', fontSize:12, color:primary, background:'#F5F1EA', padding:'5px 12px', borderRadius:6, fontWeight:500, marginTop:8 }}>ID: {zc.meetingId}</span>}
+              <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginTop:8 }}>
+                {zc.meetingId && <span style={{ display:'inline-block', fontSize:12, color:primary, background:'#F5F1EA', padding:'5px 12px', borderRadius:6, fontWeight:500 }}>ID: {zc.meetingId}</span>}
+                {zc.passcode && <span style={{ display:'inline-block', fontSize:12, color:primary, background:'#F5F1EA', padding:'5px 12px', borderRadius:6, fontWeight:500 }}>Passcode: {zc.passcode}</span>}
+              </div>
             </div>
             <div style={{ padding:'0 28px 28px', display:'flex', flexDirection:'column', gap:10 }}>
               <a href={zc.zoomLink} target="_blank" rel="noreferrer" style={{ background:primary, color:onPrimary, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block' }}>Join Zoom</a>
