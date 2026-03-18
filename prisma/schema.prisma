@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ORGANIZATION ─────────────────────────────────────────────────────────────
+model Organization {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name           String
+  logoUrl        String?
+  primaryColor   String  @default("#3E4A27")
+  accentColor    String  @default("#C45A1A")
+  welcomeMessage String? @db.Text
+  zoomLink       String?
+  zoomSchedule   String?
+  zoomMeetingId      String?
+  zoomRecordingsUrl  String?
+  facebookUrl        String?
+
+  users             User[]
+  checklistProgress ChecklistProgress[]
+  coachInvites      CoachInvite[]
+
+  @@map("organizations")
+}
+
+// ─── USER ─────────────────────────────────────────────────────────────────────
+// id = Supabase Auth user UUID — no local password storage.
+model User {
+  id        String   @id // Supabase auth.users UUID
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email String @unique
+  name  String?
+  role  Role   @default(ORG_ADMIN)
+
+  orgId        String?
+  organization Organization? @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@map("users")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ORG_ADMIN
+}
+
+// ─── CHECKLIST PROGRESS ───────────────────────────────────────────────────────
+model ChecklistProgress {
+  id          String   @id @default(cuid())
+  clientToken String
+  orgId       String
+  listKey     String
+  checkedJson String
+  updatedAt   DateTime @updatedAt
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@unique([clientToken, orgId, listKey])
+  @@map("checklist_progress")
+}
+
+// ─── COACH INVITE ─────────────────────────────────────────────────────────────
+model CoachInvite {
+  id         String    @id @default(cuid())
+  orgId      String
+  email      String
+  token      String    @unique
+  expiresAt  DateTime
+  acceptedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@map("coach_invites")
+}

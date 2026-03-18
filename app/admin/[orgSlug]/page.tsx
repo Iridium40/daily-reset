@@ -1,0 +1,257 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter, useParams } from 'next/navigation'
+import LogoUploader from '@/components/LogoUploader'
+import CoachManager from '@/components/CoachManager'
+import { createClient } from '@/lib/supabase/browser'
+
+type AppUser = {
+  role: string
+  orgSlug: string | null
+  email: string
+}
+
+type OrgConfig = {
+  name:           string
+  logoUrl:        string
+  primaryColor:   string
+  accentColor:    string
+  welcomeMessage: string
+  zoomLink:       string
+  zoomSchedule:   string
+  zoomMeetingId:      string
+  zoomRecordingsUrl:  string
+  facebookUrl:        string
+}
+
+export default function AdminPage() {
+  const router  = useRouter()
+  const params  = useParams()
+  const orgSlug = params?.orgSlug as string
+  const supabase = createClient()
+
+  const [user,   setUser]   = useState<AppUser | null>(null)
+  const [config, setConfig] = useState<OrgConfig | null>(null)
+  const [saving, setSaving]   = useState(false)
+  const [saved,  setSaved]    = useState(false)
+  const [error,  setError]    = useState('')
+  const [authLoading, setAuthLoading] = useState(true)
+
+  // Auth guard
+  useEffect(() => {
+    async function checkAuth() {
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      if (!authUser) { router.push('/login'); return }
+
+      const res = await fetch('/api/auth/me')
+      if (!res.ok) { router.push('/login'); return }
+      const appUser = await res.json()
+      setUser(appUser)
+
+      if (appUser.role === 'ORG_ADMIN' && appUser.orgSlug !== orgSlug) {
+        router.push(`/admin/${appUser.orgSlug}`)
+        return
+      }
+      setAuthLoading(false)
+    }
+    checkAuth()
+  }, [orgSlug, router])
+
+  // Load org data
+  useEffect(() => {
+    if (!orgSlug || authLoading) return
+    fetch(`/api/orgs/${orgSlug}`)
+      .then(r => r.json())
+      .then(data => setConfig({
+        name:           data.name           || '',
+        logoUrl:        data.logoUrl        || '',
+        primaryColor:   data.primaryColor   || '#3E4A27',
+        accentColor:    data.accentColor    || '#C45A1A',
+        welcomeMessage: data.welcomeMessage || '',
+        zoomLink:       data.zoomLink       || '',
+        zoomSchedule:   data.zoomSchedule   || '',
+        zoomMeetingId:      data.zoomMeetingId      || '',
+        zoomRecordingsUrl:  data.zoomRecordingsUrl  || '',
+        facebookUrl:        data.facebookUrl        || '',
+      }))
+      .catch(() => setError('Could not load org config.'))
+  }, [orgSlug, authLoading])
+
+  async function handleSave() {
+    setSaving(true)
+    setSaved(false)
+    setError('')
+    try {
+      const res = await fetch(`/api/orgs/${orgSlug}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      })
+      if (!res.ok) throw new Error('Save failed')
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } catch {
+      setError('Save failed. Please try again.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleSignOut() {
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
+
+  if (authLoading || !config) {
+    return <div style={styles.loading}>Loading...</div>
+  }
+
+  const primary = config.primaryColor
+  const accent  = config.accentColor
+
+  return (
+    <div style={{ fontFamily: "'DM Sans', sans-serif", background: '#F7F2E8', minHeight: '100vh', color: '#2C2416' }}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:wght@400;500;600&display=swap');`}</style>
+
+      <header style={{ background: primary, padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8A9D5C', marginBottom: 4 }}>Admin Panel</div>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 600, color: '#FDFAF4', margin: 0 }}>{config.name || orgSlug}</h1>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <a href={`/hub/${orgSlug}`} target="_blank" rel="noreferrer"
+            style={{ background: accent, color: 'white', fontSize: 12, fontWeight: 600, padding: '10px 20px', borderRadius: 8, textDecoration: 'none' }}>
+            Preview Hub →
+          </a>
+          <button onClick={handleSignOut}
+            style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#A89E8C', fontSize: 11, fontWeight: 600, padding: '10px 16px', borderRadius: 8, cursor: 'pointer' }}>
+            Sign Out
+          </button>
+        </div>
+      </header>
+
+      <main style={{ maxWidth: 680, margin: '0 auto', padding: '40px 24px' }}>
+
+        {error && <div style={{ background: '#FDE8E8', border: '1px solid #C43B3B', borderRadius: 10, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#C43B3B' }}>{error}</div>}
+        {saved && <div style={{ background: '#E8F4E8', border: '1px solid #5C6B3A', borderRadius: 10, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#3E4A27' }}>✓ Changes saved successfully!</div>}
+
+        <Section title="Branding">
+          <Field label="Organization Name">
+            <input style={styles.input} value={config.name} onChange={e => setConfig({ ...config, name: e.target.value })} placeholder="e.g. The Smith Coaching Team" />
+          </Field>
+          <Field label="Logo">
+            <LogoUploader
+              orgSlug={orgSlug}
+              currentUrl={config.logoUrl}
+              accent={accent}
+              onUploaded={url => setConfig({ ...config, logoUrl: url })}
+            />
+          </Field>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <Field label="Primary Color (Header/Nav)">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <input type="color" value={config.primaryColor} onChange={e => setConfig({ ...config, primaryColor: e.target.value })} style={{ width: 48, height: 40, borderRadius: 8, border: '1px solid #E2D9C5', cursor: 'pointer', padding: 2 }} />
+                <input style={{ ...styles.input, flex: 1 }} value={config.primaryColor} onChange={e => setConfig({ ...config, primaryColor: e.target.value })} placeholder="#3E4A27" />
+              </div>
+            </Field>
+            <Field label="Accent Color (Buttons/Highlights)">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <input type="color" value={config.accentColor} onChange={e => setConfig({ ...config, accentColor: e.target.value })} style={{ width: 48, height: 40, borderRadius: 8, border: '1px solid #E2D9C5', cursor: 'pointer', padding: 2 }} />
+                <input style={{ ...styles.input, flex: 1 }} value={config.accentColor} onChange={e => setConfig({ ...config, accentColor: e.target.value })} placeholder="#C45A1A" />
+              </div>
+            </Field>
+          </div>
+        </Section>
+
+        <Section title="Welcome Message">
+          <Field label="Custom intro text shown at the top of the client hub">
+            <textarea style={{ ...styles.input, minHeight: 100, resize: 'vertical' }} value={config.welcomeMessage} onChange={e => setConfig({ ...config, welcomeMessage: e.target.value })}
+              placeholder="Welcome to our community! Watch the start video, grab the Zoom link, and use the Daily videos to stay consistent..." />
+          </Field>
+        </Section>
+
+        <Section title="Community Zoom">
+          <Field label="Zoom Join Link">
+            <input style={styles.input} value={config.zoomLink} onChange={e => setConfig({ ...config, zoomLink: e.target.value })} placeholder="https://zoom.us/j/..." />
+          </Field>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <Field label="Schedule Text">
+              <input style={styles.input} value={config.zoomSchedule} onChange={e => setConfig({ ...config, zoomSchedule: e.target.value })} placeholder="Every Monday 7pm CST · 8pm EST" />
+            </Field>
+            <Field label="Meeting ID">
+              <input style={styles.input} value={config.zoomMeetingId} onChange={e => setConfig({ ...config, zoomMeetingId: e.target.value })} placeholder="815 630 1595" />
+            </Field>
+          </div>
+          <Field label="Past Recordings URL">
+            <input style={styles.input} value={config.zoomRecordingsUrl} onChange={e => setConfig({ ...config, zoomRecordingsUrl: e.target.value })} placeholder="https://docs.google.com/document/d/..." />
+          </Field>
+        </Section>
+
+        <Section title="Facebook Group">
+          <Field label="Private Facebook Group URL">
+            <input style={styles.input} value={config.facebookUrl} onChange={e => setConfig({ ...config, facebookUrl: e.target.value })} placeholder="https://www.facebook.com/groups/..." />
+          </Field>
+        </Section>
+
+        <CoachManager orgSlug={orgSlug} accent={accent} />
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 32 }}>
+          <a href={`/hub/${orgSlug}`} target="_blank" rel="noreferrer"
+            style={{ fontSize: 13, fontWeight: 600, color: accent, padding: '12px 24px', border: `1px solid ${accent}`, borderRadius: 10, textDecoration: 'none' }}>
+            Preview Hub
+          </a>
+          <button onClick={handleSave} disabled={saving}
+            style={{ background: saving ? '#A89E8C' : accent, color: 'white', fontSize: 14, fontWeight: 600, padding: '12px 32px', borderRadius: 10, border: 'none', cursor: saving ? 'not-allowed' : 'pointer' }}>
+            {saving ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
+
+      </main>
+    </div>
+  )
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div style={{ background: '#FDFAF4', border: '1px solid #E2D9C5', borderRadius: 16, padding: '28px 28px', marginBottom: 20, boxShadow: '0 2px 8px rgba(44,36,22,0.06)' }}>
+      <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 600, color: '#2C2416', marginBottom: 20 }}>{title}</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>{children}</div>
+    </div>
+  )
+}
+
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>{label}</label>
+      {hint && <p style={{ fontSize: 11, color: '#A89E8C', marginBottom: 6 }}>{hint}</p>}
+      {children}
+    </div>
+  )
+}
+
+const styles = {
+  input: {
+    width: '100%',
+    padding: '11px 14px',
+    borderRadius: 8,
+    border: '1px solid #E2D9C5',
+    background: '#F7F2E8',
+    fontSize: 14,
+    color: '#2C2416',
+    outline: 'none',
+    fontFamily: "'DM Sans', sans-serif",
+    boxSizing: 'border-box',
+  } as React.CSSProperties,
+  loading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    fontFamily: "'DM Sans', sans-serif",
+    color: '#7A6E5C',
+    fontSize: 16,
+  } as React.CSSProperties,
+}
