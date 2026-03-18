@@ -29,12 +29,19 @@ export default function LoginPage() {
     }
 
     // Fetch app user to determine redirect
-    const res  = await fetch('/api/auth/me')
-    const user = await res.json()
-
-    if (user?.role === 'SUPER_ADMIN') router.push('/superadmin')
-    else if (user?.orgSlug)           router.push(`/admin/${user.orgSlug}`)
-    else                              router.push('/')
+    try {
+      const res = await fetch('/api/auth/me')
+      if (res.ok) {
+        const user = await res.json()
+        if (user?.role === 'SUPER_ADMIN') router.push('/superadmin')
+        else if (user?.orgSlug)           router.push(`/admin/${user.orgSlug}`)
+        else                              router.push('/superadmin')
+      } else {
+        router.push('/superadmin')
+      }
+    } catch {
+      router.push('/superadmin')
+    }
 
     router.refresh()
   }
