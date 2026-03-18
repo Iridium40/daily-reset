@@ -320,7 +320,7 @@ export default function AdminPage() {
               </Field>
             </div>
           ))}
-          <button onClick={handleAddZoomCall} style={{ fontSize: 13, fontWeight: 600, color: accent, background: 'none', border: `1px dashed ${accent}66`, padding: '12px 0', borderRadius: 8, cursor: 'pointer', width: '100%', marginBottom: 16 }}>+ Add Zoom Call</button>
+          <button onClick={handleAddZoomCall} style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: accent, border: 'none', padding: '14px 0', borderRadius: 8, cursor: 'pointer', width: '100%', marginBottom: 16 }}>+ Add Zoom Call</button>
           <Field label="Past Recordings URL (shared across all zoom calls)">
             <input style={styles.input} value={config.zoomRecordingsUrl} onChange={e => setConfig({ ...config, zoomRecordingsUrl: e.target.value })} placeholder="https://docs.google.com/document/d/..." />
           </Field>
