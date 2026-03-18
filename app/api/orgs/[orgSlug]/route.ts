@@ -11,7 +11,7 @@ export async function GET(
     select: {
       id: true, slug: true, name: true,
       primaryColor: true, accentColor: true, welcomeMessage: true,
-      facebookUrl: true,
+      zoomRecordingsUrl: true, facebookUrl: true,
       zoomCalls: { orderBy: { sortOrder: 'asc' as const } },
     },
   })
@@ -31,7 +31,7 @@ export async function PATCH(
   if (!isSuperAdmin && !isOrgAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body    = await req.json()
-  const allowed = ['name','primaryColor','accentColor','welcomeMessage','facebookUrl']
+  const allowed = ['name','primaryColor','accentColor','welcomeMessage','zoomRecordingsUrl','facebookUrl']
   const data    = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)))
 
   const updated = await prisma.organization.update({ where: { slug: params.orgSlug }, data })

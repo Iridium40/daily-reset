@@ -16,6 +16,7 @@ CREATE TABLE "organizations" (
   "primaryColor"    TEXT NOT NULL DEFAULT '#3E4A27',
   "accentColor"     TEXT NOT NULL DEFAULT '#C45A1A',
   "welcomeMessage"  TEXT,
+  "zoomRecordingsUrl"   TEXT,
   "facebookUrl"         TEXT,
 
   CONSTRAINT "organizations_pkey" PRIMARY KEY ("id")
@@ -73,7 +74,6 @@ CREATE TABLE "zoom_calls" (
   "passcode"        TEXT,
   "schedule"        TEXT,
   "meetingId"       TEXT,
-  "recordingsUrl"   TEXT,
   "sortOrder"       INTEGER NOT NULL DEFAULT 0,
   "createdAt"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updatedAt"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

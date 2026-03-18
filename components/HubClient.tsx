@@ -13,13 +13,13 @@ function contrastText(hex: string): string {
 
 export type ZoomCall = {
   id: string; title: string; zoomLink: string; passcode: string | null
-  schedule: string | null; meetingId: string | null; recordingsUrl: string | null
+  schedule: string | null; meetingId: string | null
 }
 
 export type Org = {
   id: string; slug: string; name: string
   primaryColor: string; accentColor: string; welcomeMessage: string | null
-  facebookUrl: string | null
+  zoomRecordingsUrl: string | null; facebookUrl: string | null
   zoomCalls: ZoomCall[]
 }
 
@@ -245,14 +245,14 @@ export default function HubClient({ org }: { org: Org }) {
                 {zc.passcode && <span style={{ display:'inline-block', fontSize:12, color:primary, background:'#F5F1EA', padding:'5px 12px', borderRadius:6, fontWeight:500 }}>Passcode: {zc.passcode}</span>}
               </div>
             </div>
-            <div style={{ padding:'0 28px 28px', display:'flex', flexDirection:'column', gap:10 }}>
+            <div style={{ padding:'0 28px 28px' }}>
               <a href={zc.zoomLink} target="_blank" rel="noreferrer" style={{ background:primary, color:onPrimary, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block' }}>Join Zoom</a>
-              {zc.recordingsUrl && (
-                <a href={zc.recordingsUrl} target="_blank" rel="noreferrer" style={{ background:'transparent', color:primary, border:`1px solid ${primary}33`, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block' }}>Past Recordings</a>
-              )}
             </div>
           </div>
         ))}
+        {org.zoomRecordingsUrl && (
+          <a href={org.zoomRecordingsUrl} target="_blank" rel="noreferrer" style={{ background:'transparent', color:primary, border:`1px solid ${primary}33`, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block', marginBottom:16 }}>Past Recordings</a>
+        )}
         </>)}
 
         <SectionDivider label="Reference Guides" id="mm-guides" />
