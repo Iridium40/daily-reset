@@ -125,7 +125,7 @@ export default function SuperAdminPage() {
       <header style={{ background: '#3E4A27', padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8A9D5C', marginBottom: 4 }}>Master Admin</div>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 600, color: '#FDFAF4', margin: 0 }}>The Daily Reset</h1>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 600, color: '#FDFAF4', margin: 0 }}>The Daily Metabolic Reboot</h1>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ fontSize: 13, color: '#8A9D5C' }}>{user?.email}</div>

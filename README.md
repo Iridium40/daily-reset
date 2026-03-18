@@ -1,4 +1,4 @@
-# The Daily Reset — Multi-Tenant Optavia Client Hub
+# The Daily Metabolic Reboot — Multi-Tenant Optavia Client Hub
 
 A white-label, multi-tenant client hub for Optavia coaching organizations. Each coach org gets their own branded hub page, configurable from an admin panel. A super admin manages all organizations from a master dashboard.
 

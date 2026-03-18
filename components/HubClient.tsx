@@ -341,7 +341,7 @@ export default function HubClient({ org }: { org: Org }) {
       </main>
 
       <footer style={{ textAlign:'center', padding:'32px 20px', fontSize:11, color:'#A89E8C', letterSpacing:'0.1em', borderTop:'1px solid #E2D9C5' }}>
-        <div style={{ textTransform:'uppercase', marginBottom:8 }}>© {org.name} · The Daily Reset · All links open in a new tab</div>
+        <div style={{ textTransform:'uppercase', marginBottom:8 }}>© {org.name} · The Daily Metabolic Reboot · All links open in a new tab</div>
         <a href="/terms" target="_blank" rel="noreferrer" style={{ color:'#A89E8C', textDecoration:'none', fontSize:10, letterSpacing:'0.05em' }}>Terms of Service &amp; Disclosures</a>
       </footer>
     </div>

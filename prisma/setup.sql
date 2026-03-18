@@ -1,5 +1,5 @@
 -- ============================================================================
--- The Daily Reset — Database Setup
+-- The Daily Metabolic Reboot — Database Setup
 -- Run this in Supabase SQL Editor (Dashboard → SQL Editor → New query)
 -- ============================================================================
 
