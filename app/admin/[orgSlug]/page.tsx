@@ -236,18 +236,19 @@ export default function AdminPage() {
 
         <CoachManager orgSlug={orgSlug} accent={accent} />
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 32 }}>
-          <a href={`/org/${orgSlug}`} target="_blank" rel="noreferrer"
-            style={{ fontSize: 13, fontWeight: 600, color: accent, padding: '12px 24px', border: `1px solid ${accent}`, borderRadius: 10, textDecoration: 'none' }}>
-            Preview Hub
-          </a>
-          <button onClick={handleSave} disabled={saving}
-            style={{ background: saving ? '#A89E8C' : accent, color: saving ? '#fff' : onAccent, fontSize: 14, fontWeight: 600, padding: '12px 32px', borderRadius: 10, border: 'none', cursor: saving ? 'not-allowed' : 'pointer' }}>
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
-        </div>
 
       </main>
+
+      <footer style={{ background: primary, padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12 }}>
+        <a href={`/org/${orgSlug}`} target="_blank" rel="noreferrer"
+          style={{ background: 'transparent', border: `1px solid ${onPrimary}55`, color: onPrimary, fontSize: 13, fontWeight: 600, padding: '10px 20px', borderRadius: 8, textDecoration: 'none' }}>
+          Preview Hub
+        </a>
+        <button onClick={handleSave} disabled={saving}
+          style={{ background: accent, color: saving ? '#fff' : onAccent, fontSize: 14, fontWeight: 600, padding: '10px 24px', borderRadius: 8, border: 'none', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+          {saving ? 'Saving...' : 'Save Changes'}
+        </button>
+      </footer>
     </div>
   )
 }
