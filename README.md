@@ -1,4 +1,4 @@
-# The Daily Metabolic Reboot — Multi-Tenant Optavia Client Hub
+# My Metabolic Reboot — Multi-Tenant Optavia Client Hub
 
 A white-label, multi-tenant client hub for Optavia coaching organizations. Each coach org gets their own branded hub page, configurable from an admin panel. A super admin manages all organizations from a master dashboard.
 
@@ -36,7 +36,6 @@ Clients visit `/hub/[orgSlug]` with no account needed. Their checklist progress 
 | ORM          | Prisma                           |
 | Auth         | NextAuth.js (credentials + JWT)  |
 | Email        | Resend (transactional email)     |
-| File Upload  | Supabase Storage (logos)         |
 | Styling      | Inline styles + Google Fonts     |
 | Deployment   | Vercel                           |
 
@@ -60,8 +59,6 @@ cp .env.example .env.local
 ### 3. Supabase Setup
 1. Create a project at https://supabase.com
 2. Copy your connection string, URL, and keys into `.env.local`
-3. In Supabase Storage, create a **public bucket** named `logos`
-
 ### 4. Resend Setup (email)
 1. Sign up at https://resend.com (free: 3,000 emails/month)
 2. Add your domain or use the Resend sandbox for testing
@@ -97,15 +94,7 @@ npm run dev
 - Tokens are single-use and invalidated after use
 - API: `POST /api/auth/reset` (request) · `PATCH /api/auth/reset` (confirm)
 
-### ✅ Feature 3 — Logo Upload (drag & drop)
-- Org admins drag-and-drop or click to upload their logo in the admin panel
-- Uploaded to Supabase Storage bucket `logos` under `[orgSlug]/logo-[timestamp].ext`
-- Supports PNG, JPEG, WebP, SVG — max 2MB
-- Instant preview before and after upload
-- Logo URL saved to org record automatically
-- API: `POST /api/upload/logo` (multipart form)
-
-### ✅ Feature 4 — Downstream Coach Invite System
+### ✅ Feature 3 — Downstream Coach Invite System
 - Org admins can invite other coaches by email from their admin panel
 - Invite email sent via Resend with a 7-day token link
 - New coach visits `/invite?token=...`, sets name + password, account created
@@ -144,7 +133,6 @@ daily-reset/
 │       ├── auth/reset/route.ts         # Password reset (POST + PATCH)
 │       ├── orgs/[orgSlug]/route.ts     # Org data (GET + PATCH)
 │       ├── checklist/route.ts          # Checklist progress (GET + POST)
-│       ├── upload/logo/route.ts        # Logo upload (POST multipart)
 │       ├── coaches/route.ts            # Coach list + invites (GET/POST/DELETE)
 │       ├── invite/validate/route.ts    # Validate invite token (GET)
 │       ├── invite/accept/route.ts      # Accept invite + create account (POST)
@@ -153,7 +141,6 @@ daily-reset/
 │           └── orgs/[orgId]/route.ts   # Delete org (DELETE)
 ├── components/
 │   ├── HubClient.tsx                   # Full hub UI (client component)
-│   ├── LogoUploader.tsx                # Drag-and-drop logo upload
 │   └── CoachManager.tsx               # Invite + manage coaches
 ├── lib/
 │   ├── db.ts                           # Prisma singleton

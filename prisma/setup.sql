@@ -1,5 +1,5 @@
 -- ============================================================================
--- The Daily Metabolic Reboot — Database Setup
+-- My Metabolic Reboot — Database Setup
 -- Run this in Supabase SQL Editor (Dashboard → SQL Editor → New query)
 -- ============================================================================
 
@@ -13,7 +13,6 @@ CREATE TABLE "organizations" (
   "createdAt"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updatedAt"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "name"            TEXT NOT NULL,
-  "logoUrl"         TEXT,
   "primaryColor"    TEXT NOT NULL DEFAULT '#3E4A27',
   "accentColor"     TEXT NOT NULL DEFAULT '#C45A1A',
   "welcomeMessage"  TEXT,

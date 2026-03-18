@@ -14,7 +14,6 @@ type Org = {
   id:        string
   slug:      string
   name:      string
-  logoUrl:   string | null
   zoomLink:  string | null
   createdAt: string
   _count?:   { users: number }
@@ -125,7 +124,7 @@ export default function SuperAdminPage() {
       <header style={{ background: '#3E4A27', padding: '20px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#8A9D5C', marginBottom: 4 }}>Master Admin</div>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 600, color: '#FDFAF4', margin: 0 }}>The Daily Metabolic Reboot</h1>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 600, color: '#FDFAF4', margin: 0 }}>My Metabolic Reboot</h1>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ fontSize: 13, color: '#8A9D5C' }}>{user?.email}</div>
@@ -193,7 +192,6 @@ export default function SuperAdminPage() {
             <div style={{ padding: '40px 28px', textAlign: 'center', color: '#A89E8C', fontSize: 14 }}>No organizations yet. Create your first one above.</div>
           ) : orgs.map((org, i) => (
             <div key={org.id} style={{ padding: '18px 24px', borderBottom: i < orgs.length - 1 ? '1px solid #EDE4D0' : 'none', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
-              {org.logoUrl && <img src={org.logoUrl} alt={org.name} style={{ height: 36, width: 36, objectFit: 'contain', borderRadius: 6 }} />}
               <div style={{ flex: 1, minWidth: 160 }}>
                 <div style={{ fontWeight: 600, fontSize: 15, color: '#2C2416' }}>{org.name}</div>
                 <div style={{ fontSize: 12, color: '#A89E8C', fontFamily: 'monospace' }}>/org/{org.slug}</div>

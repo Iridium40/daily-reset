@@ -58,8 +58,8 @@ export default function LoginPage() {
       <div style={{ background: '#FDFAF4', border: '1px solid #E2D9C5', borderRadius: 20, padding: '48px 40px', width: '100%', maxWidth: 420, boxShadow: '0 8px 40px rgba(44,36,22,0.12)' }}>
         <div style={{ textAlign: 'center', marginBottom: 8 }}>
           <img
-            src="https://tiggbprqgezztvcakpce.supabase.co/storage/v1/object/public/branding/Continuous%20Loop%20Emblem%20of%20Metabolic%20Renewal.png"
-            alt="The Daily Metabolic Reboot"
+            src="https://tiggbprqgezztvcakpce.supabase.co/storage/v1/object/public/branding/myMetabolicReboot.png"
+            alt="My Metabolic Reboot"
             style={{ width: 160, height: 160, objectFit: 'contain', margin: '0 auto' }}
           />
         </div>

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service & Disclosures — The Daily Metabolic Reboot',
+  title: 'Terms of Service & Disclosures — My Metabolic Reboot',
 }
 
 const green = {
@@ -53,7 +53,7 @@ export default function TermsPage() {
       <header style={{ background: `linear-gradient(135deg, ${green.dark} 0%, ${green.primary} 60%, ${green.accent} 100%)`, padding: '48px 32px 40px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 3, textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>Legal Documents</div>
         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(26px, 5vw, 40px)', fontWeight: 700, color: '#fff', marginBottom: 8 }}>Terms of Service &amp; Disclosures</h1>
-        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', maxWidth: 500, margin: '0 auto' }}>The Daily Metabolic Reboot — Independent Coach Business Management Platform</p>
+        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', maxWidth: 500, margin: '0 auto' }}>My Metabolic Reboot — Independent Coach Business Management Platform</p>
         <span style={{ display: 'inline-block', marginTop: 16, background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 20, padding: '4px 16px', fontSize: 11, color: 'rgba(255,255,255,0.8)', letterSpacing: 0.5 }}>Last Updated: March 17, 2026</span>
       </header>
 
@@ -101,7 +101,7 @@ export default function TermsPage() {
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: green.primary, opacity: 0.7, marginBottom: 4 }}>Section 01</div>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: text.dark, marginBottom: 16 }}>Independent Tool Disclosure</div>
 
-          <p style={pStyle}><strong style={{ color: text.dark }}>This application ("The Daily Metabolic Reboot," "the App," "the Platform," or "the Service") is an independently created, privately operated business management tool.</strong> It is designed to assist individual OPTAVIA health coaches in organizing their personal coaching practices.</p>
+          <p style={pStyle}><strong style={{ color: text.dark }}>This application ("My Metabolic Reboot," "the App," "the Platform," or "the Service") is an independently created, privately operated business management tool.</strong> It is designed to assist individual OPTAVIA health coaches in organizing their personal coaching practices.</p>
 
           <h4 style={h4Style}>What This App Is NOT:</h4>
           <ul style={ulStyle}>
@@ -131,14 +131,14 @@ export default function TermsPage() {
 
         {/* Section 3: Acceptance */}
         <SectionBlock id="acceptance" num="03" title="Acceptance of Terms">
-          <p style={pStyle}>By accessing or using The Daily Metabolic Reboot platform, you (&quot;User,&quot; &quot;you,&quot; or &quot;your&quot;) agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to these Terms, you may not access or use the Service.</p>
+          <p style={pStyle}>By accessing or using My Metabolic Reboot platform, you (&quot;User,&quot; &quot;you,&quot; or &quot;your&quot;) agree to be bound by these Terms of Service (&quot;Terms&quot;). If you do not agree to these Terms, you may not access or use the Service.</p>
           <p style={pStyle}>We reserve the right to update these Terms at any time. Continued use of the Service following notice of changes constitutes your acceptance of the revised Terms. The &quot;Last Updated&quot; date at the top of this page reflects when changes were most recently made.</p>
-          <p style={pStyle}>These Terms constitute a legally binding agreement between you and the operator of The Daily Metabolic Reboot (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;).</p>
+          <p style={pStyle}>These Terms constitute a legally binding agreement between you and the operator of My Metabolic Reboot (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;).</p>
         </SectionBlock>
 
         {/* Section 4: Description */}
         <SectionBlock id="description" num="04" title="Description of Service">
-          <p style={pStyle}>The Daily Metabolic Reboot is an independent, privately operated business management platform designed to help OPTAVIA health coaches organize and manage their coaching practice. The Service may include, but is not limited to:</p>
+          <p style={pStyle}>My Metabolic Reboot is an independent, privately operated business management platform designed to help OPTAVIA health coaches organize and manage their coaching practice. The Service may include, but is not limited to:</p>
           <ul style={ulStyle}>
             <li style={liStyle}>Prospect and client pipeline management tools</li>
             <li style={liStyle}>Coach development and mentoring tracking</li>
@@ -231,7 +231,7 @@ export default function TermsPage() {
         <SectionBlock id="contact" num="12" title="Contact Information">
           <p style={pStyle}>If you have questions about these Terms or this App&apos;s independence from OPTAVIA, please contact us:</p>
           <HighlightBox>
-            <strong style={{ color: green.dark }}>The Daily Metabolic Reboot</strong><br />
+            <strong style={{ color: green.dark }}>My Metabolic Reboot</strong><br />
             Operated by Rogers Optimal Health<br />
             Covington, Louisiana<br />
             <br />
@@ -244,7 +244,7 @@ export default function TermsPage() {
 
       {/* Footer */}
       <footer style={{ textAlign: 'center', padding: '32px 24px', borderTop: `1px solid ${border}`, marginTop: 40 }}>
-        <p style={{ fontSize: 11.5, color: text.muted, maxWidth: 620, margin: '0 auto 8px' }}>© 2026 Rogers Optimal Health / The Daily Metabolic Reboot. All rights reserved.</p>
+        <p style={{ fontSize: 11.5, color: text.muted, maxWidth: 620, margin: '0 auto 8px' }}>© 2026 Rogers Optimal Health / My Metabolic Reboot. All rights reserved.</p>
         <p style={{ fontSize: 11.5, color: text.muted, maxWidth: 620, margin: '0 auto 8px' }}>OPTAVIA® is a registered trademark of Medifast, Inc. This application is not affiliated with, endorsed by, or in any way connected to OPTAVIA LLC or Medifast, Inc.</p>
         <p style={{ fontSize: 11.5, color: text.muted, maxWidth: 620, margin: '12px auto 0', fontStyle: 'italic' }}>These Terms were last updated March 17, 2026. This document does not constitute legal advice. Consult a qualified attorney for advice specific to your situation.</p>
       </footer>

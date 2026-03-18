@@ -15,7 +15,6 @@ model Organization {
   updatedAt DateTime @updatedAt
 
   name           String
-  logoUrl        String?
   primaryColor   String  @default("#3E4A27")
   accentColor    String  @default("#C45A1A")
   welcomeMessage String? @db.Text

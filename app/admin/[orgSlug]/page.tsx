@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import LogoUploader from '@/components/LogoUploader'
 import CoachManager from '@/components/CoachManager'
 import { createClient } from '@/lib/supabase/browser'
 
@@ -14,7 +13,6 @@ type AppUser = {
 
 type OrgConfig = {
   name:           string
-  logoUrl:        string
   primaryColor:   string
   accentColor:    string
   welcomeMessage: string
@@ -72,7 +70,6 @@ export default function AdminPage() {
       .then(r => r.json())
       .then(data => setConfig({
         name:           data.name           || '',
-        logoUrl:        data.logoUrl        || '',
         primaryColor:   data.primaryColor   || '#3E4A27',
         accentColor:    data.accentColor    || '#C45A1A',
         welcomeMessage: data.welcomeMessage || '',
@@ -178,16 +175,8 @@ export default function AdminPage() {
         </div>
 
         <Section title="Branding">
-          <Field label="Organization Name">
-            <input style={styles.input} value={config.name} onChange={e => setConfig({ ...config, name: e.target.value })} placeholder="e.g. The Smith Coaching Team" />
-          </Field>
-          <Field label="Logo">
-            <LogoUploader
-              orgSlug={orgSlug}
-              currentUrl={config.logoUrl}
-              accent={accent}
-              onUploaded={url => setConfig({ ...config, logoUrl: url })}
-            />
+          <Field label="Title">
+            <input style={styles.input} value={config.name} onChange={e => setConfig({ ...config, name: e.target.value })} placeholder="e.g. Client Hub" />
           </Field>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <Field label="Primary Color (Header/Nav)">

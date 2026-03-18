@@ -28,10 +28,10 @@ export async function sendPasswordResetEmail({
   await getResend().emails.send({
     from:    FROM,
     to,
-    subject: 'Reset your password — The Daily Metabolic Reboot',
+    subject: 'Reset your password — My Metabolic Reboot',
     html: `
       <div style="font-family: 'DM Sans', sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 24px; background: #F7F2E8;">
-        <h1 style="font-size: 28px; color: #2C2416; margin-bottom: 8px;">The Daily Metabolic Reboot</h1>
+        <h1 style="font-size: 28px; color: #2C2416; margin-bottom: 8px;">My Metabolic Reboot</h1>
         ${orgName ? `<p style="color: #7A6E5C; font-size: 14px; margin-bottom: 24px;">${orgName}</p>` : ''}
         <h2 style="font-size: 20px; color: #2C2416; margin-bottom: 16px;">Reset Your Password</h2>
         <p style="color: #7A6E5C; font-size: 14px; line-height: 1.6; margin-bottom: 28px;">
@@ -47,7 +47,7 @@ export async function sendPasswordResetEmail({
           This link will expire in 1 hour.
         </p>
         <hr style="border: none; border-top: 1px solid #E2D9C5; margin: 24px 0;" />
-        <p style="color: #A89E8C; font-size: 11px;">© The Daily Metabolic Reboot · All rights reserved</p>
+        <p style="color: #A89E8C; font-size: 11px;">© My Metabolic Reboot · All rights reserved</p>
       </div>
     `,
   })
@@ -68,14 +68,14 @@ export async function sendCoachInviteEmail({
   await getResend().emails.send({
     from:    FROM,
     to,
-    subject: `You're invited to join ${orgName} — The Daily Metabolic Reboot`,
+    subject: `You're invited to join ${orgName} — My Metabolic Reboot`,
     html: `
       <div style="font-family: 'DM Sans', sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 24px; background: #F7F2E8;">
-        <h1 style="font-size: 28px; color: #2C2416; margin-bottom: 8px;">The Daily Metabolic Reboot</h1>
+        <h1 style="font-size: 28px; color: #2C2416; margin-bottom: 8px;">My Metabolic Reboot</h1>
         <p style="color: #7A6E5C; font-size: 14px; margin-bottom: 24px;">${orgName}</p>
         <h2 style="font-size: 20px; color: #2C2416; margin-bottom: 16px;">You're Invited!</h2>
         <p style="color: #7A6E5C; font-size: 14px; line-height: 1.6; margin-bottom: 8px;">
-          <strong>${invitedBy}</strong> has invited you to join <strong>${orgName}</strong> as a coach admin on The Daily Metabolic Reboot platform.
+          <strong>${invitedBy}</strong> has invited you to join <strong>${orgName}</strong> as a coach admin on My Metabolic Reboot platform.
         </p>
         <p style="color: #7A6E5C; font-size: 14px; line-height: 1.6; margin-bottom: 28px;">
           Click below to create your account and start sharing the client hub with your clients.
@@ -89,7 +89,7 @@ export async function sendCoachInviteEmail({
           This invite link expires in 7 days. If you weren't expecting this, you can ignore this email.
         </p>
         <hr style="border: none; border-top: 1px solid #E2D9C5; margin: 24px 0;" />
-        <p style="color: #A89E8C; font-size: 11px;">© The Daily Metabolic Reboot · All rights reserved</p>
+        <p style="color: #A89E8C; font-size: 11px;">© My Metabolic Reboot · All rights reserved</p>
       </div>
     `,
   })

@@ -73,7 +73,7 @@ function InviteInner() {
       <div style={{ background: '#FDFAF4', border: '1px solid #E2D9C5', borderRadius: 20, padding: '48px 40px', width: '100%', maxWidth: 440, boxShadow: '0 8px 40px rgba(44,36,22,0.12)' }}>
 
         <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 600, color: '#2C2416', marginBottom: 4, textAlign: 'center' }}>
-          The Daily Metabolic Reboot
+          My Metabolic Reboot
         </h1>
 
         {invalid ? (

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Providers from './providers'
 
 export const metadata: Metadata = {
-  title: 'The Daily Metabolic Reboot',
+  title: 'My Metabolic Reboot',
   description: 'Multi-tenant Optavia client hub for coaching organizations',
 }
 

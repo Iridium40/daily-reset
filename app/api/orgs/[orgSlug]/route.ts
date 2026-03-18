@@ -9,7 +9,7 @@ export async function GET(
   const org = await prisma.organization.findUnique({
     where: { slug: params.orgSlug },
     select: {
-      id: true, slug: true, name: true, logoUrl: true,
+      id: true, slug: true, name: true,
       primaryColor: true, accentColor: true, welcomeMessage: true,
       zoomLink: true, zoomSchedule: true, zoomMeetingId: true, zoomRecordingsUrl: true, facebookUrl: true,
     },
@@ -30,7 +30,7 @@ export async function PATCH(
   if (!isSuperAdmin && !isOrgAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body    = await req.json()
-  const allowed = ['name','logoUrl','primaryColor','accentColor','welcomeMessage','zoomLink','zoomSchedule','zoomMeetingId','zoomRecordingsUrl','facebookUrl']
+  const allowed = ['name','primaryColor','accentColor','welcomeMessage','zoomLink','zoomSchedule','zoomMeetingId','zoomRecordingsUrl','facebookUrl']
   const data    = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)))
 
   const updated = await prisma.organization.update({ where: { slug: params.orgSlug }, data })
