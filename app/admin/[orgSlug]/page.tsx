@@ -77,10 +77,10 @@ export default function AdminPage() {
     fetch(`/api/orgs/${orgSlug}`)
       .then(r => r.json())
       .then(data => setConfig({
-        name:           data.name           || '',
+        name:           data.name           || 'Client Hub',
         primaryColor:   data.primaryColor   || '#3E4A27',
         accentColor:    data.accentColor    || '#C45A1A',
-        welcomeMessage: data.welcomeMessage || '',
+        welcomeMessage: data.welcomeMessage || "Watch the start video, grab the Zoom links, get your essentials, and use the Daily videos to stay consistent. Keep it simple. Don\u2019t overthink it. Just execute.",
         zoomLink:       data.zoomLink       || '',
         zoomSchedule:   data.zoomSchedule   || '',
         zoomMeetingId:      data.zoomMeetingId      || '',
