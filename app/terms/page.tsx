@@ -232,7 +232,7 @@ export default function TermsPage() {
           <p style={pStyle}>If you have questions about these Terms or this App&apos;s independence from OPTAVIA, please contact us:</p>
           <HighlightBox>
             <strong style={{ color: brand.primary }}>My Metabolic Reboot</strong><br />
-            Operated by Rogers Optimal Health<br />
+            Operated by Smith Health & Wellness LLC<br />
             Covington, Louisiana<br />
             <br />
             <em>Note: This is an independent business and is not an OPTAVIA LLC contact address.</em>
@@ -244,7 +244,7 @@ export default function TermsPage() {
 
       {/* Footer */}
       <footer style={{ textAlign: 'center', padding: '32px 24px', borderTop: `1px solid ${border}`, marginTop: 40 }}>
-        <p style={{ fontSize: 11.5, color: text.muted, maxWidth: 620, margin: '0 auto 8px' }}>© 2026 Rogers Optimal Health / My Metabolic Reboot. All rights reserved.</p>
+        <p style={{ fontSize: 11.5, color: text.muted, maxWidth: 620, margin: '0 auto 8px' }}>© 2026 Smith Health & Wellness LLC / My Metabolic Reboot. All rights reserved.</p>
         <p style={{ fontSize: 11.5, color: text.muted, maxWidth: 620, margin: '0 auto 8px' }}>OPTAVIA® is a registered trademark of Medifast, Inc. This application is not affiliated with, endorsed by, or in any way connected to OPTAVIA LLC or Medifast, Inc.</p>
         <p style={{ fontSize: 11.5, color: text.muted, maxWidth: 620, margin: '12px auto 0', fontStyle: 'italic' }}>These Terms were last updated March 17, 2026. This document does not constitute legal advice. Consult a qualified attorney for advice specific to your situation.</p>
       </footer>
