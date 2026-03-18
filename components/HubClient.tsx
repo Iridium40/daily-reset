@@ -312,6 +312,10 @@ export default function HubClient({ org }: { org: Org }) {
         </a>
 
         <SectionDivider label="Account & Orders" />
+        <a href="https://www.optavia.com/us/en/" target="_blank" rel="noreferrer"
+          style={{ display:'flex', alignItems:'center', justifyContent:'center', background:primary, padding:'14px 0', borderRadius:8, textDecoration:'none', marginBottom:16 }}>
+          <img src="https://tiggbprqgezztvcakpce.supabase.co/storage/v1/object/public/branding/optavia_logo.png" alt="OPTAVIA — Reorder" style={{ height:32, objectFit:'contain' }} />
+        </a>
         <Card icon="📦" title="How to Edit Your Order" sub="Important to know" brandColor={primary}>
           <div style={{ background:'#F5F1EA', borderRadius:12, padding:'14px 18px', fontSize:13, color:'#666', borderLeft:`3px solid ${primary}`, margin:'12px 0' }}>
             📹 Watch the short video first —&nbsp;
