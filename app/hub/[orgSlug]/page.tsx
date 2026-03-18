@@ -23,6 +23,7 @@ export async function generateMetadata({ params }: Props) {
 export default async function HubPage({ params }: Props) {
   const org = await prisma.organization.findUnique({
     where: { slug: params.orgSlug },
+    include: { zoomCalls: { orderBy: { sortOrder: 'asc' } } },
   })
 
   if (!org) notFound()
