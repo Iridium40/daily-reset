@@ -11,11 +11,16 @@ function contrastText(hex: string): string {
   return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#1A1A1A' : '#ffffff'
 }
 
+export type ZoomCall = {
+  id: string; title: string; zoomLink: string
+  schedule: string | null; meetingId: string | null; recordingsUrl: string | null
+}
+
 export type Org = {
   id: string; slug: string; name: string
   primaryColor: string; accentColor: string; welcomeMessage: string | null
-  zoomLink: string | null; zoomSchedule: string | null
-  zoomMeetingId: string | null; zoomRecordingsUrl: string | null; facebookUrl: string | null
+  facebookUrl: string | null
+  zoomCalls: ZoomCall[]
 }
 
 const DAILY_VIDEOS = [
@@ -122,9 +127,6 @@ export default function HubClient({ org }: { org: Org }) {
   const accent  = org.accentColor  || '#C45A1A'
   const onPrimary = contrastText(primary)
   const onAccent  = contrastText(accent)
-  const zoomLink = org.zoomLink
-  const zoomTime = org.zoomSchedule
-  const zoomId   = org.zoomMeetingId
   const fbUrl    = org.facebookUrl
 
   const onboardTotal = 4 + (fbUrl ? 1 : 0)
@@ -231,23 +233,23 @@ export default function HubClient({ org }: { org: Org }) {
           </>}
         </div>
 
-        {zoomLink && (<>
-        <SectionDivider label="Community Zoom" />
-        <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
-          <div style={{ padding:'28px 28px 24px' }}>
-            {zoomTime && <div style={{ fontSize:10, fontWeight:600, letterSpacing:'0.16em', textTransform:'uppercase', color:'#888', marginBottom:8 }}>Every Monday</div>}
-            <div style={{ fontWeight:700, fontSize:20, color:primary, marginBottom:6 }}>Client Community Zoom</div>
-            {zoomTime && <div style={{ fontSize:15, color:primary, marginBottom:2 }}>{zoomTime}</div>}
-            {zoomTime && <div style={{ fontSize:13, color:'#888', marginBottom:12 }}>weekly</div>}
-            {zoomId && <span style={{ display:'inline-block', fontSize:12, color:primary, background:'#F5F1EA', padding:'5px 12px', borderRadius:6, fontWeight:500 }}>ID: {zoomId}</span>}
+        {org.zoomCalls.length > 0 && (<>
+        <SectionDivider label="Community Zoom Calls" />
+        {org.zoomCalls.map(zc => (
+          <div key={zc.id} style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
+            <div style={{ padding:'28px 28px 24px' }}>
+              <div style={{ fontWeight:700, fontSize:20, color:primary, marginBottom:6 }}>{zc.title}</div>
+              {zc.schedule && <div style={{ fontSize:15, color:primary, marginBottom:2 }}>{zc.schedule}</div>}
+              {zc.meetingId && <span style={{ display:'inline-block', fontSize:12, color:primary, background:'#F5F1EA', padding:'5px 12px', borderRadius:6, fontWeight:500, marginTop:8 }}>ID: {zc.meetingId}</span>}
+            </div>
+            <div style={{ padding:'0 28px 28px', display:'flex', flexDirection:'column', gap:10 }}>
+              <a href={zc.zoomLink} target="_blank" rel="noreferrer" style={{ background:primary, color:onPrimary, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block' }}>Join Zoom</a>
+              {zc.recordingsUrl && (
+                <a href={zc.recordingsUrl} target="_blank" rel="noreferrer" style={{ background:'transparent', color:primary, border:`1px solid ${primary}33`, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block' }}>Past Recordings</a>
+              )}
+            </div>
           </div>
-          <div style={{ padding:'0 28px 28px', display:'flex', flexDirection:'column', gap:10 }}>
-            <a href={zoomLink} target="_blank" rel="noreferrer" style={{ background:primary, color:onPrimary, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block' }}>Join Zoom</a>
-            {org.zoomRecordingsUrl && (
-              <a href={org.zoomRecordingsUrl} target="_blank" rel="noreferrer" style={{ background:'transparent', color:primary, border:`1px solid ${primary}33`, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block' }}>Past Recordings</a>
-            )}
-          </div>
-        </div>
+        ))}
         </>)}
 
         <SectionDivider label="Reference Guides" id="mm-guides" />

@@ -16,10 +16,6 @@ CREATE TABLE "organizations" (
   "primaryColor"    TEXT NOT NULL DEFAULT '#3E4A27',
   "accentColor"     TEXT NOT NULL DEFAULT '#C45A1A',
   "welcomeMessage"  TEXT,
-  "zoomLink"        TEXT,
-  "zoomSchedule"    TEXT,
-  "zoomMeetingId"       TEXT,
-  "zoomRecordingsUrl"   TEXT,
   "facebookUrl"         TEXT,
 
   CONSTRAINT "organizations_pkey" PRIMARY KEY ("id")
@@ -65,6 +61,27 @@ CREATE UNIQUE INDEX "checklist_progress_clientToken_orgId_listKey_key"
 
 ALTER TABLE "checklist_progress"
   ADD CONSTRAINT "checklist_progress_orgId_fkey"
+  FOREIGN KEY ("orgId") REFERENCES "organizations"("id")
+  ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- ─── ZOOM CALLS ───────────────────────────────────────────────────────────
+CREATE TABLE "zoom_calls" (
+  "id"              TEXT NOT NULL DEFAULT gen_random_uuid()::text,
+  "orgId"           TEXT NOT NULL,
+  "title"           TEXT NOT NULL,
+  "zoomLink"        TEXT NOT NULL,
+  "schedule"        TEXT,
+  "meetingId"       TEXT,
+  "recordingsUrl"   TEXT,
+  "sortOrder"       INTEGER NOT NULL DEFAULT 0,
+  "createdAt"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt"       TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT "zoom_calls_pkey" PRIMARY KEY ("id")
+);
+
+ALTER TABLE "zoom_calls"
+  ADD CONSTRAINT "zoom_calls_orgId_fkey"
   FOREIGN KEY ("orgId") REFERENCES "organizations"("id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 

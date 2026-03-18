@@ -16,11 +16,16 @@ type OrgConfig = {
   primaryColor:   string
   accentColor:    string
   welcomeMessage: string
-  zoomLink:       string
-  zoomSchedule:   string
-  zoomMeetingId:      string
-  zoomRecordingsUrl:  string
   facebookUrl:        string
+}
+
+type ZoomCall = {
+  id: string
+  title: string
+  zoomLink: string
+  schedule: string
+  meetingId: string
+  recordingsUrl: string
 }
 
 function contrastText(hex: string): string {
@@ -39,6 +44,7 @@ export default function AdminPage() {
 
   const [user,   setUser]   = useState<AppUser | null>(null)
   const [config, setConfig] = useState<OrgConfig | null>(null)
+  const [zoomCalls, setZoomCalls] = useState<ZoomCall[]>([])
   const [saving, setSaving]   = useState(false)
   const [saved,  setSaved]    = useState(false)
   const [error,  setError]    = useState('')
@@ -76,17 +82,23 @@ export default function AdminPage() {
     if (!orgSlug || authLoading) return
     fetch(`/api/orgs/${orgSlug}`)
       .then(r => r.json())
-      .then(data => setConfig({
-        name:           data.name           || 'Client Hub',
-        primaryColor:   data.primaryColor   || '#3E4A27',
-        accentColor:    data.accentColor    || '#C45A1A',
-        welcomeMessage: data.welcomeMessage || "Watch the start video, grab the Zoom links, get your essentials, and use the Daily videos to stay consistent. Keep it simple. Don\u2019t overthink it. Just execute.",
-        zoomLink:       data.zoomLink       || '',
-        zoomSchedule:   data.zoomSchedule   || '',
-        zoomMeetingId:      data.zoomMeetingId      || '',
-        zoomRecordingsUrl:  data.zoomRecordingsUrl  || '',
-        facebookUrl:        data.facebookUrl        || '',
-      }))
+      .then(data => {
+        setConfig({
+          name:           data.name           || 'Client Hub',
+          primaryColor:   data.primaryColor   || '#3E4A27',
+          accentColor:    data.accentColor    || '#C45A1A',
+          welcomeMessage: data.welcomeMessage || "Watch the start video, grab the Zoom links, get your essentials, and use the Daily videos to stay consistent. Keep it simple. Don\u2019t overthink it. Just execute.",
+          facebookUrl:    data.facebookUrl    || '',
+        })
+        setZoomCalls((data.zoomCalls || []).map((zc: any) => ({
+          id: zc.id,
+          title: zc.title || '',
+          zoomLink: zc.zoomLink || '',
+          schedule: zc.schedule || '',
+          meetingId: zc.meetingId || '',
+          recordingsUrl: zc.recordingsUrl || '',
+        })))
+      })
       .catch(() => setError('Could not load org config.'))
   }, [orgSlug, authLoading])
 
@@ -101,6 +113,29 @@ export default function AdminPage() {
         body: JSON.stringify(config),
       })
       if (!res.ok) throw new Error('Save failed')
+
+      for (const zc of zoomCalls) {
+        if (zc.id.startsWith('new-')) {
+          await fetch('/api/zoom-calls', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orgSlug, title: zc.title, zoomLink: zc.zoomLink, schedule: zc.schedule, meetingId: zc.meetingId, recordingsUrl: zc.recordingsUrl }),
+          })
+        } else {
+          await fetch('/api/zoom-calls', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: zc.id, orgSlug, title: zc.title, zoomLink: zc.zoomLink, schedule: zc.schedule, meetingId: zc.meetingId, recordingsUrl: zc.recordingsUrl }),
+          })
+        }
+      }
+
+      const refreshed = await fetch(`/api/zoom-calls?orgSlug=${orgSlug}`).then(r => r.json())
+      setZoomCalls(refreshed.map((zc: any) => ({
+        id: zc.id, title: zc.title || '', zoomLink: zc.zoomLink || '',
+        schedule: zc.schedule || '', meetingId: zc.meetingId || '', recordingsUrl: zc.recordingsUrl || '',
+      })))
+
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
     } catch {
@@ -108,6 +143,31 @@ export default function AdminPage() {
     } finally {
       setSaving(false)
     }
+  }
+
+  async function handleDeleteZoomCall(id: string) {
+    if (id.startsWith('new-')) {
+      setZoomCalls(prev => prev.filter(zc => zc.id !== id))
+      return
+    }
+    try {
+      await fetch('/api/zoom-calls', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, orgSlug }),
+      })
+      setZoomCalls(prev => prev.filter(zc => zc.id !== id))
+    } catch {
+      setError('Failed to delete zoom call.')
+    }
+  }
+
+  function handleAddZoomCall() {
+    setZoomCalls(prev => [...prev, { id: `new-${Date.now()}`, title: '', zoomLink: '', schedule: '', meetingId: '', recordingsUrl: '' }])
+  }
+
+  function handleZoomCallChange(id: string, field: keyof ZoomCall, value: string) {
+    setZoomCalls(prev => prev.map(zc => zc.id === id ? { ...zc, [field]: value } : zc))
   }
 
   async function handleSignOut() {
@@ -232,21 +292,33 @@ export default function AdminPage() {
           </div>
         </Section>
 
-        <Section title="Community Zoom">
-          <Field label="Zoom Join Link">
-            <input style={styles.input} value={config.zoomLink} onChange={e => setConfig({ ...config, zoomLink: e.target.value })} placeholder="https://zoom.us/j/..." />
-          </Field>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-            <Field label="Schedule Text">
-              <input style={styles.input} value={config.zoomSchedule} onChange={e => setConfig({ ...config, zoomSchedule: e.target.value })} placeholder="Every Monday 7pm CST · 8pm EST" />
-            </Field>
-            <Field label="Meeting ID">
-              <input style={styles.input} value={config.zoomMeetingId} onChange={e => setConfig({ ...config, zoomMeetingId: e.target.value })} placeholder="815 630 1595" />
-            </Field>
-          </div>
-          <Field label="Past Recordings URL">
-            <input style={styles.input} value={config.zoomRecordingsUrl} onChange={e => setConfig({ ...config, zoomRecordingsUrl: e.target.value })} placeholder="https://docs.google.com/document/d/..." />
-          </Field>
+        <Section title="Community Zoom Calls">
+          {zoomCalls.map((zc, idx) => (
+            <div key={zc.id} style={{ background: '#FDFBF7', border: '1px solid #E2D9C5', borderRadius: 12, padding: 20, marginBottom: 16, position: 'relative' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#3E4A27' }}>Zoom Call {idx + 1}</div>
+                <button onClick={() => handleDeleteZoomCall(zc.id)} style={{ fontSize: 11, fontWeight: 600, color: '#C45A1A', background: 'none', border: '1px solid #C45A1A33', padding: '4px 12px', borderRadius: 6, cursor: 'pointer' }}>Remove</button>
+              </div>
+              <Field label="Title">
+                <input style={styles.input} value={zc.title} onChange={e => handleZoomCallChange(zc.id, 'title', e.target.value)} placeholder="e.g. Monday Night Zoom" />
+              </Field>
+              <Field label="Zoom Join Link">
+                <input style={styles.input} value={zc.zoomLink} onChange={e => handleZoomCallChange(zc.id, 'zoomLink', e.target.value)} placeholder="https://zoom.us/j/..." />
+              </Field>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <Field label="Schedule Text">
+                  <input style={styles.input} value={zc.schedule} onChange={e => handleZoomCallChange(zc.id, 'schedule', e.target.value)} placeholder="Every Monday 7pm CST · 8pm EST" />
+                </Field>
+                <Field label="Meeting ID">
+                  <input style={styles.input} value={zc.meetingId} onChange={e => handleZoomCallChange(zc.id, 'meetingId', e.target.value)} placeholder="815 630 1595" />
+                </Field>
+              </div>
+              <Field label="Past Recordings URL">
+                <input style={styles.input} value={zc.recordingsUrl} onChange={e => handleZoomCallChange(zc.id, 'recordingsUrl', e.target.value)} placeholder="https://docs.google.com/document/d/..." />
+              </Field>
+            </div>
+          ))}
+          <button onClick={handleAddZoomCall} style={{ fontSize: 13, fontWeight: 600, color: accent, background: 'none', border: `1px dashed ${accent}66`, padding: '12px 0', borderRadius: 8, cursor: 'pointer', width: '100%' }}>+ Add Zoom Call</button>
         </Section>
 
         <Section title="Facebook Group">

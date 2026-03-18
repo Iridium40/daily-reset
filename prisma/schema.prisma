@@ -18,15 +18,12 @@ model Organization {
   primaryColor   String  @default("#3E4A27")
   accentColor    String  @default("#C45A1A")
   welcomeMessage String? @db.Text
-  zoomLink       String?
-  zoomSchedule   String?
-  zoomMeetingId      String?
-  zoomRecordingsUrl  String?
   facebookUrl        String?
 
   users             User[]
   checklistProgress ChecklistProgress[]
   coachInvites      CoachInvite[]
+  zoomCalls         ZoomCall[]
 
   @@map("organizations")
 }
@@ -66,6 +63,24 @@ model ChecklistProgress {
 
   @@unique([clientToken, orgId, listKey])
   @@map("checklist_progress")
+}
+
+// ─── ZOOM CALL ───────────────────────────────────────────────────────────────
+model ZoomCall {
+  id            String   @id @default(cuid())
+  orgId         String
+  title         String
+  zoomLink      String
+  schedule      String?
+  meetingId     String?
+  recordingsUrl String?
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@map("zoom_calls")
 }
 
 // ─── COACH INVITE ─────────────────────────────────────────────────────────────

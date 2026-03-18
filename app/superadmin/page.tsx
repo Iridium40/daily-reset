@@ -14,7 +14,6 @@ type Org = {
   id:        string
   slug:      string
   name:      string
-  zoomLink:  string | null
   createdAt: string
   _count?:   { users: number }
 }
