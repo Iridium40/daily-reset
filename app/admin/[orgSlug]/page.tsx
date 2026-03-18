@@ -37,6 +37,7 @@ export default function AdminPage() {
   const [saved,  setSaved]    = useState(false)
   const [error,  setError]    = useState('')
   const [authLoading, setAuthLoading] = useState(true)
+  const [copied, setCopied]   = useState(false)
 
   const [authError, setAuthError] = useState('')
 
@@ -152,6 +153,29 @@ export default function AdminPage() {
 
         {error && <div style={{ background: '#FDE8E8', border: '1px solid #C43B3B', borderRadius: 10, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#C43B3B' }}>{error}</div>}
         {saved && <div style={{ background: '#E8F4E8', border: '1px solid #5C6B3A', borderRadius: 10, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#3E4A27' }}>✓ Changes saved successfully!</div>}
+
+        <div style={{ background: '#FDFAF4', border: '1px solid #E2D9C5', borderRadius: 16, padding: '20px 28px', marginBottom: 20, boxShadow: '0 2px 8px rgba(44,36,22,0.06)' }}>
+          <label style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 8 }}>Client Hub URL</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <input
+              readOnly
+              value={`${typeof window !== 'undefined' ? window.location.origin : ''}/org/${orgSlug}`}
+              style={{ ...styles.input, flex: 1, cursor: 'text', color: '#2C2416' }}
+              onFocus={e => e.target.select()}
+            />
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(`${window.location.origin}/org/${orgSlug}`)
+                setCopied(true)
+                setTimeout(() => setCopied(false), 2500)
+              }}
+              style={{ background: copied ? '#5C6B3A' : accent, color: 'white', fontSize: 12, fontWeight: 600, padding: '11px 20px', borderRadius: 8, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background 0.2s' }}
+            >
+              {copied ? 'Copied!' : 'Copy Link'}
+            </button>
+          </div>
+          <p style={{ fontSize: 11, color: '#A89E8C', marginTop: 8, marginBottom: 0 }}>Share this link with your clients so they can access their hub.</p>
+        </div>
 
         <Section title="Branding">
           <Field label="Organization Name">
