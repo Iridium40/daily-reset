@@ -318,7 +318,7 @@ export default function AdminPage() {
             <HubSubsection
               step={1}
               title="Structure & navigation"
-              subtitle="Top nav, section headings, optional action buttons on sections (each opens in a new tab), and the featured “Watch This” card."
+              subtitle="Top nav, section headings, optional action buttons, and the cream 💡 “Watch This” / mission card (below daily videos — not the Quick Start hero at the top)."
               accent={accent}
               onAccent={onAccent}
             >

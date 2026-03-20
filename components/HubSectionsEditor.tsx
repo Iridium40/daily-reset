@@ -130,15 +130,18 @@ export default function HubSectionsEditor({ layout, onChange }: { layout: HubLay
       <StandardBlock title="Daily videos" section={layout.dailyVideos}
         onChange={dailyVideos => onChange({ ...layout, dailyVideos })} />
 
-      <div style={{ background: '#FDFBF7', border: '1px solid #E2D9C5', borderRadius: 12, padding: 16, marginBottom: 14 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: '#3E4A27', marginBottom: 12 }}>Featured video card (“Watch This”)</div>
-        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>Section label (optional — leave empty to hide divider)</label>
+      <div style={{ background: '#FDFBF7', border: '2px solid #C4B896', borderRadius: 12, padding: 16, marginBottom: 14 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#3E4A27', marginBottom: 8 }}>Lightbulb card — “Watch This” / mission</div>
+        <p style={{ fontSize: 12, color: '#5C5346', margin: '0 0 14px', lineHeight: 1.55, padding: '12px 14px', background: '#FAF4E6', borderRadius: 8, border: '1px solid #E8DEC8' }}>
+          <strong>Edit this here.</strong> This is the wide cream card with the 💡 circle, small <strong>WATCH THIS</strong>-style line, and main headline — it sits <strong>below the daily video grid</strong> and above Account &amp; Orders. (It is <em>not</em> the “Quick Start” hero at the top of the hub; that’s in Step 2.)
+        </p>
+        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>Divider above card (optional — leave empty to hide)</label>
         <input style={{ ...inputStyle, marginBottom: 12 }} value={layout.watchThis.sectionTitle} onChange={e => setWatch({ ...layout.watchThis, sectionTitle: e.target.value })} />
-        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>Tagline (small caps)</label>
+        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>Small label above headline (e.g. Watch This)</label>
         <input style={{ ...inputStyle, marginBottom: 12 }} value={layout.watchThis.cardTagline} onChange={e => setWatch({ ...layout.watchThis, cardTagline: e.target.value })} />
-        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>Card title</label>
+        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>Main headline</label>
         <input style={{ ...inputStyle, marginBottom: 12 }} value={layout.watchThis.cardTitle} onChange={e => setWatch({ ...layout.watchThis, cardTitle: e.target.value })} />
-        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>Video / link URL</label>
+        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>Link when the card is clicked</label>
         <input style={{ ...inputStyle, marginBottom: 12 }} value={layout.watchThis.cardUrl} onChange={e => setWatch({ ...layout.watchThis, cardUrl: e.target.value })} />
         <ButtonEditor buttons={layout.watchThis.buttons} onChange={buttons => setWatch({ ...layout.watchThis, buttons })} />
       </div>

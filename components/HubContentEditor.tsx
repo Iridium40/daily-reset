@@ -79,7 +79,8 @@ export default function HubContentEditor({ content, onChange }: { content: HubCo
         <input style={inp} value={content.completionMessages.essentialsComplete} onChange={e => set({ completionMessages: { ...content.completionMessages, essentialsComplete: e.target.value } })} />
       </Box>
 
-      <Box title="Hero — Quick Start video card">
+      <Box title="Top of hub — Quick Start video (hero)">
+        <p style={{ ...sub, marginTop: -4 }}>This is the first video strip at the <strong>top</strong> of the page — not the cream 💡 “Watch This” card (that’s in Step 1 → Lightbulb card).</p>
         <input style={{ ...inp, marginBottom: 8 }} placeholder="Video URL" value={content.quickStart.url} onChange={e => set({ quickStart: { ...content.quickStart, url: e.target.value } })} />
         <input style={{ ...inp, marginBottom: 8 }} placeholder="Tagline (e.g. Start here — 7 min)" value={content.quickStart.tagline} onChange={e => set({ quickStart: { ...content.quickStart, tagline: e.target.value } })} />
         <input style={inp} placeholder="Title" value={content.quickStart.title} onChange={e => set({ quickStart: { ...content.quickStart, title: e.target.value } })} />
