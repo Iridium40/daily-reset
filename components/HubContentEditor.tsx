@@ -30,6 +30,29 @@ const addBtn: React.CSSProperties = {
 
 const sub = { fontSize: 12, color: '#7A6E5C', margin: '0 0 8px' } as React.CSSProperties
 
+/** Icons/emojis are fixed in defaults — not editable in admin. */
+const readOnlyEmoji: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  minHeight: 42,
+  padding: '10px 12px',
+  borderRadius: 8,
+  border: '1px solid #D5CCB8',
+  background: '#EDE8DC',
+  fontSize: 20,
+  lineHeight: 1,
+  color: '#2C2416',
+  boxSizing: 'border-box',
+  userSelect: 'none',
+  cursor: 'default',
+}
+
+function ReadOnlyEmoji({ value }: { value: string }) {
+  return <span style={readOnlyEmoji}>{value.trim() ? value : '—'}</span>
+}
+
 function Box({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ background: '#FDFBF7', border: '1px solid #E2D9C5', borderRadius: 12, padding: 16, marginBottom: 16 }}>
@@ -103,9 +126,8 @@ export default function HubContentEditor({ content, onChange }: { content: HubCo
       <Box title="Program essentials checklist">
         {content.essentials.map((row, i) => (
           <div key={i} style={{ borderBottom: '1px solid #E2D9C5', paddingBottom: 12, marginBottom: 12 }}>
-            <input style={{ ...inp, marginBottom: 6 }} placeholder="Emoji" value={row.emoji || ''} onChange={e => {
-              const essentials = [...content.essentials]; essentials[i] = { ...row, emoji: e.target.value }; set({ essentials })
-            }} />
+            <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 4 }}>Icon (read-only)</label>
+            <div style={{ marginBottom: 8, maxWidth: 72 }}><ReadOnlyEmoji value={row.emoji || ''} /></div>
             <input style={{ ...inp, marginBottom: 6 }} placeholder="Title" value={row.label} onChange={e => {
               const essentials = [...content.essentials]; essentials[i] = { ...row, label: e.target.value }; set({ essentials })
             }} />
@@ -133,7 +155,7 @@ export default function HubContentEditor({ content, onChange }: { content: HubCo
       <Box title="Reference guides (PDF links)">
         {content.guides.map((g, i) => (
           <div key={i} style={{ display: 'grid', gridTemplateColumns: '60px 1fr 1fr auto', gap: 8, marginBottom: 8, alignItems: 'center' }}>
-            <input style={inp} value={g.emoji} onChange={e => { const guides = [...content.guides]; guides[i] = { ...g, emoji: e.target.value }; set({ guides }) }} />
+            <ReadOnlyEmoji value={g.emoji} />
             <input style={inp} placeholder="Name" value={g.name} onChange={e => { const guides = [...content.guides]; guides[i] = { ...g, name: e.target.value }; set({ guides }) }} />
             <input style={inp} placeholder="URL" value={g.url} onChange={e => { const guides = [...content.guides]; guides[i] = { ...g, url: e.target.value }; set({ guides }) }} />
             <button type="button" onClick={() => set({ guides: content.guides.filter((_, j) => j !== i) })} style={{ fontSize: 11, color: '#3E4A27', border: '1px solid #E2D9C5', borderRadius: 6, padding: '8px', background: '#fff', cursor: 'pointer' }}>✕</button>
@@ -146,7 +168,7 @@ export default function HubContentEditor({ content, onChange }: { content: HubCo
         {content.tips.map((t, i) => (
           <div key={i} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: '1px solid #E2D9C5' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr', gap: 8, marginBottom: 6 }}>
-              <input style={inp} value={t.emoji} onChange={e => { const tips = [...content.tips]; tips[i] = { ...t, emoji: e.target.value }; set({ tips }) }} />
+              <ReadOnlyEmoji value={t.emoji} />
               <input style={inp} placeholder="Title" value={t.title} onChange={e => { const tips = [...content.tips]; tips[i] = { ...t, title: e.target.value }; set({ tips }) }} />
             </div>
             <textarea style={{ ...inp, minHeight: 52, marginBottom: 6 }} placeholder="Description" value={t.desc} onChange={e => { const tips = [...content.tips]; tips[i] = { ...t, desc: e.target.value }; set({ tips }) }} />
@@ -158,7 +180,8 @@ export default function HubContentEditor({ content, onChange }: { content: HubCo
       </Box>
 
       <Box title="Daily videos — Night Before card">
-        <input style={{ ...inp, marginBottom: 8 }} placeholder="Emoji" value={content.nightBefore.emoji} onChange={e => set({ nightBefore: { ...content.nightBefore, emoji: e.target.value } })} />
+        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 4 }}>Icon (read-only)</label>
+        <div style={{ marginBottom: 8, maxWidth: 72 }}><ReadOnlyEmoji value={content.nightBefore.emoji} /></div>
         <input style={{ ...inp, marginBottom: 8 }} placeholder="Tagline" value={content.nightBefore.tagline} onChange={e => set({ nightBefore: { ...content.nightBefore, tagline: e.target.value } })} />
         <input style={{ ...inp, marginBottom: 8 }} placeholder="Title" value={content.nightBefore.title} onChange={e => set({ nightBefore: { ...content.nightBefore, title: e.target.value } })} />
         <textarea style={{ ...inp, minHeight: 56, marginBottom: 8 }} placeholder="Subtitle" value={content.nightBefore.sub} onChange={e => set({ nightBefore: { ...content.nightBefore, sub: e.target.value } })} />
@@ -178,7 +201,8 @@ export default function HubContentEditor({ content, onChange }: { content: HubCo
       </Box>
 
       <Box title="Account — How to edit your order">
-        <input style={{ ...inp, marginBottom: 8 }} placeholder="Icon (emoji)" value={content.orderEdit.icon} onChange={e => set({ orderEdit: { ...content.orderEdit, icon: e.target.value } })} />
+        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 4 }}>Card icon (read-only)</label>
+        <div style={{ marginBottom: 8, maxWidth: 72 }}><ReadOnlyEmoji value={content.orderEdit.icon} /></div>
         <input style={{ ...inp, marginBottom: 8 }} placeholder="Card title" value={content.orderEdit.title} onChange={e => set({ orderEdit: { ...content.orderEdit, title: e.target.value } })} />
         <input style={{ ...inp, marginBottom: 8 }} placeholder="Subtitle" value={content.orderEdit.sub} onChange={e => set({ orderEdit: { ...content.orderEdit, sub: e.target.value } })} />
         <input style={{ ...inp, marginBottom: 8 }} placeholder="Callout text before video link" value={content.orderEdit.calloutLead} onChange={e => set({ orderEdit: { ...content.orderEdit, calloutLead: e.target.value } })} />
@@ -200,7 +224,8 @@ export default function HubContentEditor({ content, onChange }: { content: HubCo
       </Box>
 
       <Box title="Account — Referral program card">
-        <input style={{ ...inp, marginBottom: 8 }} placeholder="Icon" value={content.referral.icon} onChange={e => set({ referral: { ...content.referral, icon: e.target.value } })} />
+        <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 4 }}>Card icon (read-only)</label>
+        <div style={{ marginBottom: 8, maxWidth: 72 }}><ReadOnlyEmoji value={content.referral.icon} /></div>
         <input style={{ ...inp, marginBottom: 8 }} placeholder="Title" value={content.referral.title} onChange={e => set({ referral: { ...content.referral, title: e.target.value } })} />
         <input style={{ ...inp, marginBottom: 12 }} placeholder="Subtitle" value={content.referral.sub} onChange={e => set({ referral: { ...content.referral, sub: e.target.value } })} />
         <p style={{ fontSize: 12, fontWeight: 600, color: '#7A6E5C' }}>Steps (numbered)</p>
