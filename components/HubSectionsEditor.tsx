@@ -3,6 +3,19 @@
 import type { HubActionButton, HubLayout, HubNavItem, HubStandardSection, HubWatchThisSection } from '@/lib/hubLayout'
 import { DEFAULT_HUB_LAYOUT } from '@/lib/hubLayout'
 
+/** Fixed admin UI colors — never use org accent here (light accents disappear on cream backgrounds). */
+const addRowBtn: React.CSSProperties = {
+  fontSize: 12,
+  fontWeight: 600,
+  color: '#3E4A27',
+  background: '#fff',
+  border: '1px dashed #3E4A27',
+  padding: '8px 12px',
+  borderRadius: 8,
+  cursor: 'pointer',
+  marginTop: 4,
+}
+
 const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '10px 12px',
@@ -16,7 +29,7 @@ const inputStyle: React.CSSProperties = {
   fontFamily: "'DM Sans', sans-serif",
 }
 
-function ButtonEditor({ buttons, onChange, accent }: { buttons: HubActionButton[]; onChange: (b: HubActionButton[]) => void; accent: string }) {
+function ButtonEditor({ buttons, onChange }: { buttons: HubActionButton[]; onChange: (b: HubActionButton[]) => void }) {
   return (
     <div style={{ marginTop: 12 }}>
       <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7A6E5C', marginBottom: 8 }}>Action buttons (optional)</div>
@@ -29,11 +42,10 @@ function ButtonEditor({ buttons, onChange, accent }: { buttons: HubActionButton[
             const n = [...buttons]; n[i] = { ...n[i], url: e.target.value }; onChange(n)
           }} />
           <button type="button" onClick={() => onChange(buttons.filter((_, j) => j !== i))}
-            style={{ fontSize: 11, fontWeight: 600, color: '#C45A1A', background: 'none', border: '1px solid #E2D9C5', padding: '8px 10px', borderRadius: 6, cursor: 'pointer' }}>Remove</button>
+            style={{ fontSize: 11, fontWeight: 600, color: '#3E4A27', background: 'none', border: '1px solid #E2D9C5', padding: '8px 10px', borderRadius: 6, cursor: 'pointer' }}>Remove</button>
         </div>
       ))}
-      <button type="button" onClick={() => onChange([...buttons, { label: '', url: '' }])}
-        style={{ fontSize: 12, fontWeight: 600, color: accent, background: 'none', border: `1px dashed ${accent}99`, padding: '8px 12px', borderRadius: 8, cursor: 'pointer', marginTop: 4 }}>
+      <button type="button" onClick={() => onChange([...buttons, { label: '', url: '' }])} style={addRowBtn}>
         + Add button
       </button>
     </div>
@@ -44,14 +56,12 @@ function StandardBlock({
   title,
   section,
   onChange,
-  accent,
   showInnerTitle,
   innerTitleHint,
 }: {
   title: string
   section: HubStandardSection
   onChange: (s: HubStandardSection) => void
-  accent: string
   showInnerTitle?: boolean
   innerTitleHint?: string
 }) {
@@ -66,12 +76,12 @@ function StandardBlock({
           <input style={{ ...inputStyle, marginBottom: 12 }} value={section.innerTitle || ''} onChange={e => onChange({ ...section, innerTitle: e.target.value })} />
         </>
       )}
-      <ButtonEditor buttons={section.buttons} onChange={buttons => onChange({ ...section, buttons })} accent={accent} />
+      <ButtonEditor buttons={section.buttons} onChange={buttons => onChange({ ...section, buttons })} />
     </div>
   )
 }
 
-function NavEditor({ nav, onChange, accent }: { nav: HubNavItem[]; onChange: (n: HubNavItem[]) => void; accent: string }) {
+function NavEditor({ nav, onChange }: { nav: HubNavItem[]; onChange: (n: HubNavItem[]) => void }) {
   return (
     <div style={{ background: '#FDFBF7', border: '1px solid #E2D9C5', borderRadius: 12, padding: 16, marginBottom: 14 }}>
       <div style={{ fontSize: 13, fontWeight: 700, color: '#3E4A27', marginBottom: 12 }}>Top navigation</div>
@@ -85,40 +95,39 @@ function NavEditor({ nav, onChange, accent }: { nav: HubNavItem[]; onChange: (n:
             const n = [...nav]; n[i] = { ...n[i], href: e.target.value }; onChange(n)
           }} />
           <button type="button" onClick={() => onChange(nav.filter((_, j) => j !== i))}
-            style={{ fontSize: 11, fontWeight: 600, color: '#C45A1A', background: 'none', border: '1px solid #E2D9C5', padding: '8px 10px', borderRadius: 6, cursor: 'pointer' }}>Remove</button>
+            style={{ fontSize: 11, fontWeight: 600, color: '#3E4A27', background: 'none', border: '1px solid #E2D9C5', padding: '8px 10px', borderRadius: 6, cursor: 'pointer' }}>Remove</button>
         </div>
       ))}
-      <button type="button" onClick={() => onChange([...nav, { label: '', href: '' }])}
-        style={{ fontSize: 12, fontWeight: 600, color: accent, background: 'none', border: `1px dashed ${accent}99`, padding: '8px 12px', borderRadius: 8, cursor: 'pointer', marginTop: 4 }}>
+      <button type="button" onClick={() => onChange([...nav, { label: '', href: '' }])} style={addRowBtn}>
         + Add nav link
       </button>
     </div>
   )
 }
 
-export default function HubSectionsEditor({ layout, onChange, accent }: { layout: HubLayout; onChange: (l: HubLayout) => void; accent: string }) {
+export default function HubSectionsEditor({ layout, onChange }: { layout: HubLayout; onChange: (l: HubLayout) => void }) {
   const setWatch = (w: HubWatchThisSection) => onChange({ ...layout, watchThis: w })
 
   return (
     <div>
-      <NavEditor nav={layout.nav} onChange={nav => onChange({ ...layout, nav })} accent={accent} />
+      <NavEditor nav={layout.nav} onChange={nav => onChange({ ...layout, nav })} />
 
-      <StandardBlock title="Onboarding checklist" section={layout.onboarding} accent={accent} showInnerTitle innerTitleHint="Checklist card title"
+      <StandardBlock title="Onboarding checklist" section={layout.onboarding} showInnerTitle innerTitleHint="Checklist card title"
         onChange={onboarding => onChange({ ...layout, onboarding })} />
 
-      <StandardBlock title="Program essentials" section={layout.essentials} accent={accent} showInnerTitle innerTitleHint="Checklist card title"
+      <StandardBlock title="Program essentials" section={layout.essentials} showInnerTitle innerTitleHint="Checklist card title"
         onChange={essentials => onChange({ ...layout, essentials })} />
 
-      <StandardBlock title="Community Zoom (section label only)" section={layout.communityZoom} accent={accent}
+      <StandardBlock title="Community Zoom (section label only)" section={layout.communityZoom}
         onChange={communityZoom => onChange({ ...layout, communityZoom })} />
 
-      <StandardBlock title="Reference guides" section={layout.guides} accent={accent}
+      <StandardBlock title="Reference guides" section={layout.guides}
         onChange={guides => onChange({ ...layout, guides })} />
 
-      <StandardBlock title="Metabolic reset tips" section={layout.tips} accent={accent}
+      <StandardBlock title="Metabolic reset tips" section={layout.tips}
         onChange={tips => onChange({ ...layout, tips })} />
 
-      <StandardBlock title="Daily videos" section={layout.dailyVideos} accent={accent}
+      <StandardBlock title="Daily videos" section={layout.dailyVideos}
         onChange={dailyVideos => onChange({ ...layout, dailyVideos })} />
 
       <div style={{ background: '#FDFBF7', border: '1px solid #E2D9C5', borderRadius: 12, padding: 16, marginBottom: 14 }}>
@@ -131,10 +140,10 @@ export default function HubSectionsEditor({ layout, onChange, accent }: { layout
         <input style={{ ...inputStyle, marginBottom: 12 }} value={layout.watchThis.cardTitle} onChange={e => setWatch({ ...layout.watchThis, cardTitle: e.target.value })} />
         <label style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>Video / link URL</label>
         <input style={{ ...inputStyle, marginBottom: 12 }} value={layout.watchThis.cardUrl} onChange={e => setWatch({ ...layout.watchThis, cardUrl: e.target.value })} />
-        <ButtonEditor buttons={layout.watchThis.buttons} onChange={buttons => setWatch({ ...layout.watchThis, buttons })} accent={accent} />
+        <ButtonEditor buttons={layout.watchThis.buttons} onChange={buttons => setWatch({ ...layout.watchThis, buttons })} />
       </div>
 
-      <StandardBlock title="Account & orders" section={layout.accountOrders} accent={accent}
+      <StandardBlock title="Account & orders" section={layout.accountOrders}
         onChange={accountOrders => onChange({ ...layout, accountOrders })} />
 
       <button type="button" onClick={() => onChange(JSON.parse(JSON.stringify(DEFAULT_HUB_LAYOUT)) as HubLayout)}

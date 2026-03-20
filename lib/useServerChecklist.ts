@@ -91,7 +91,7 @@ export function useServerChecklist({ orgId, listKey, total }: UseServerChecklist
   }, [total, saveToServer])
 
   const doneCount = checked.filter(Boolean).length
-  const allDone   = doneCount === total
+  const allDone   = total > 0 && doneCount === total
 
   return { checked, toggle, reset, doneCount, allDone, loading }
 }

@@ -19,6 +19,7 @@ CREATE TABLE "organizations" (
   "zoomRecordingsUrl"   TEXT,
   "facebookUrl"         TEXT,
   "hubSectionsJson"     TEXT,
+  "hubContentJson"      TEXT,
 
   CONSTRAINT "organizations_pkey" PRIMARY KEY ("id")
 );

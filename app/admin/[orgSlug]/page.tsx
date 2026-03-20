@@ -7,6 +7,9 @@ import HubSectionsEditor from '@/components/HubSectionsEditor'
 import { createClient } from '@/lib/supabase/browser'
 import type { HubLayout } from '@/lib/hubLayout'
 import { parseHubLayout, serializeHubLayout } from '@/lib/hubLayout'
+import type { HubContent } from '@/lib/hubContent'
+import { parseHubContent, serializeHubContent } from '@/lib/hubContent'
+import HubContentEditor from '@/components/HubContentEditor'
 
 type AppUser = {
   role: string
@@ -50,6 +53,7 @@ export default function AdminPage() {
   const [config, setConfig] = useState<OrgConfig | null>(null)
   const [zoomCalls, setZoomCalls] = useState<ZoomCall[]>([])
   const [hubLayout, setHubLayout] = useState<HubLayout>(() => parseHubLayout(null))
+  const [hubContent, setHubContent] = useState<HubContent>(() => parseHubContent(null))
   const [saving, setSaving]   = useState(false)
   const [saved,  setSaved]    = useState(false)
   const [error,  setError]    = useState('')
@@ -105,6 +109,7 @@ export default function AdminPage() {
           meetingId: zc.meetingId || '',
         })))
         setHubLayout(parseHubLayout(data.hubSectionsJson))
+        setHubContent(parseHubContent(data.hubContentJson))
       })
       .catch(() => setError('Could not load org config.'))
   }, [orgSlug, authLoading])
@@ -120,6 +125,7 @@ export default function AdminPage() {
         body: JSON.stringify({
           ...config,
           hubSectionsJson: serializeHubLayout(hubLayout),
+          hubContentJson: serializeHubContent(hubContent),
         }),
       })
       if (!res.ok) throw new Error('Save failed')
@@ -304,9 +310,13 @@ export default function AdminPage() {
 
         <Section title="Client hub — sections & buttons">
           <p style={{ fontSize: 13, color: '#7A6E5C', marginTop: 0, marginBottom: 8 }}>
-            Customize section labels and add optional action buttons (each opens in a new tab). Default content (checklists, guides, videos) stays the same; only titles and extra buttons change.
+            Customize section labels and add optional action buttons (each opens in a new tab).
           </p>
-          <HubSectionsEditor layout={hubLayout} onChange={setHubLayout} accent={accent} />
+          <HubSectionsEditor layout={hubLayout} onChange={setHubLayout} />
+        </Section>
+
+        <Section title="Client hub — page content (checklists, guides, videos)">
+          <HubContentEditor content={hubContent} onChange={setHubContent} />
         </Section>
 
         <Section title="Community Zoom Calls">
@@ -335,7 +345,7 @@ export default function AdminPage() {
               </Field>
             </div>
           ))}
-          <button onClick={handleAddZoomCall} style={{ fontSize: 13, fontWeight: 600, color: '#fff', background: accent, border: 'none', padding: '14px 0', borderRadius: 8, cursor: 'pointer', width: '100%', marginBottom: 16 }}>+ Add Zoom Call</button>
+          <button onClick={handleAddZoomCall} style={{ fontSize: 13, fontWeight: 600, color: onAccent, background: accent, border: `1px solid ${onAccent}33`, padding: '14px 0', borderRadius: 8, cursor: 'pointer', width: '100%', marginBottom: 16 }}>+ Add Zoom Call</button>
           <Field label="Past Recordings URL (shared across all zoom calls)">
             <input style={styles.input} value={config.zoomRecordingsUrl} onChange={e => setConfig({ ...config, zoomRecordingsUrl: e.target.value })} placeholder="https://docs.google.com/document/d/..." />
           </Field>

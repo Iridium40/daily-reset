@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useServerChecklist } from '@/lib/useServerChecklist'
 import { parseHubLayout, type HubActionButton } from '@/lib/hubLayout'
+import { parseHubContent, resolveOnboardingItems } from '@/lib/hubContent'
 
 function contrastText(hex: string): string {
   const c = hex.replace('#', '')
@@ -22,32 +23,9 @@ export type Org = {
   primaryColor: string; accentColor: string; welcomeMessage: string | null
   zoomRecordingsUrl: string | null; facebookUrl: string | null
   hubSectionsJson?: string | null
+  hubContentJson?: string | null
   zoomCalls: ZoomCall[]
 }
-
-const DAILY_VIDEOS = [
-  { day: 'Night Before', label: 'Prep your environment. Set expectations. Start clean.', url: 'https://hohdigitallibrary.com/nightbefore', isNight: true },
-  { day: 'Day 1', label: 'Kickoff',          url: 'https://hohdigitallibrary.com/day1' },
-  { day: 'Day 2', label: 'Build Momentum',   url: 'https://hohdigitallibrary.com/day2' },
-  { day: 'Day 3', label: 'Dial In Basics',   url: 'https://hohdigitallibrary.com/day3' },
-  { day: 'Day 4', label: 'Stay Consistent',  url: 'https://hohdigitallibrary.com/day4' },
-  { day: 'Day 5', label: 'Win the Weekend',  url: 'https://hohdigitallibrary.com/day5' },
-  { day: 'Day 6', label: "Don't Overthink",  url: 'https://hohdigitallibrary.com/day6' },
-  { day: 'Day 7', label: 'Finish Week One',  url: 'https://hohdigitallibrary.com/day7' },
-  { day: 'Day 8', label: 'Lock It In',       url: 'https://hohdigitallibrary.com/day8' },
-]
-const GUIDES = [
-  { emoji: '📘', name: 'Optavia Guide',              url: 'https://optaviamedia.com/pdf/LEARN/32240-GUI_OPTAVIA-Guide.pdf' },
-  { emoji: '🥦', name: 'Vegetable Conversion Chart', url: 'https://optaviamedia.com/pdf/LEARN/OPTAVIA-Vegetarian_Conversion_Chart.pdf' },
-  { emoji: '🧴', name: 'Condiments + Healthy Fats',  url: 'https://optaviamedia.com/pdf/LEARN/OPTAVIA_CondimentSheet.pdf' },
-  { emoji: '🌿', name: 'Vegetarian Info Sheet',      url: 'https://optaviamedia.com/pdf/learn/OPTAVIA-Vegetarian-Info-Sheet.pdf' },
-  { emoji: '🍽️', name: 'Dining Out Guide',           url: 'https://optaviamedia.com/pdf/learn/50054-GUI_OPTAVIA-Dining-Out.pdf' },
-]
-const TIPS = [
-  { emoji: '🔬', title: 'The Reset Explained',          desc: "Understand how the metabolic reset works and why it's effective", url: 'https://www.themetabolicmission.com/resetexplained' },
-  { emoji: '🍷', title: 'Alcohol & the Reset',          desc: 'What you need to know about alcohol during your program',        url: 'https://www.themetabolicmission.com/alcohol' },
-  { emoji: '🏃', title: 'Working Out During the Reset', desc: 'How to exercise safely and effectively while on the program',    url: 'https://www.themetabolicmission.com/workingout' },
-]
 
 function SectionDivider({ label, id }: { label: string; id?: string }) {
   if (!label.trim()) return null
@@ -129,6 +107,7 @@ function CheckItem({ emoji, label, sub, link, checked, onToggle, outlineBtn, bra
 export default function HubClient({ org }: { org: Org }) {
   const [isAdmin, setIsAdmin] = useState(false)
   const hubLayout = useMemo(() => parseHubLayout(org.hubSectionsJson), [org.hubSectionsJson])
+  const hubContent = useMemo(() => parseHubContent(org.hubContentJson), [org.hubContentJson])
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -147,22 +126,12 @@ export default function HubClient({ org }: { org: Org }) {
   const onAccent  = contrastText(accent)
   const fbUrl    = org.facebookUrl
 
-  const onboardTotal = 4 + (fbUrl ? 1 : 0)
-  const onboard    = useServerChecklist({ orgId: org.id, listKey: 'onboard',    total: onboardTotal })
-  const essentials = useServerChecklist({ orgId: org.id, listKey: 'essentials', total: 3 })
+  const onboardResolved = useMemo(() => resolveOnboardingItems(hubContent.onboarding, fbUrl), [hubContent, fbUrl])
+  const onboardTotal = onboardResolved.length
+  const essentialsTotal = hubContent.essentials.length
 
-  const onboardItems = [
-    { label: 'Watch Element 1 video',           sub: '"Being Clear Why You\'re Here"',               link: { href:'https://vimeo.com/670494023/69cfa64553', text:'Watch →' } },
-    { label: 'Write your WHYs',                 sub: 'Take a photo holding it and send to your coach' },
-    { label: 'Take before photos',              sub: 'Front, back, and side — you\'ll want these later' },
-    { label: 'Download the Optavia app',        sub: 'Recipes, reminders, and tracking',             link: { href:'https://apps.apple.com/us/app/optavia/id1477201061', text:'Get App' } },
-    ...(fbUrl ? [{ label: 'Join the private Facebook group', sub: 'Introduce yourself so we can support you', link: { href:fbUrl, text:'Join →' } }] : []),
-  ]
-  const essItems = [
-    { emoji: '🥩', label: 'Food Scale',             sub: 'To weigh lean protein — essential.' },
-    { emoji: '⚖️', label: 'Body Composition Scale', sub: 'Digital is best. We recommend the RENPHO scale.', link: { href:'https://www.amazon.com/RENPHO-Bluetooth-Bathroom-Composition-Smartphone/dp/B01N1UX8RW', text:'Amazon →' } },
-    { emoji: '📏', label: 'Measuring Tape',         sub: "Track inches lost — the scale doesn't show the full picture." },
-  ]
+  const onboard    = useServerChecklist({ orgId: org.id, listKey: 'onboard',    total: onboardTotal })
+  const essentials = useServerChecklist({ orgId: org.id, listKey: 'essentials', total: essentialsTotal })
 
   return (
     <div style={{ fontFamily:"'DM Sans',sans-serif", background:'#F5F1EA', minHeight:'100vh', color:'#2C2416' }}>
@@ -203,12 +172,12 @@ export default function HubClient({ org }: { org: Org }) {
         </p>
 
         {/* Quick Start — inside hero */}
-        <a href="https://vimeo.com/835524024?share=copy" target="_blank" rel="noreferrer"
+        <a href={hubContent.quickStart.url} target="_blank" rel="noreferrer"
           style={{ background:'#fff', borderRadius:16, padding:'20px 24px', display:'flex', alignItems:'center', gap:20, textDecoration:'none', maxWidth:560, margin:'0 auto', position:'relative', boxShadow:'0 8px 32px rgba(0,0,0,0.25)', transform:'translateY(28px)' }}>
           <div style={{ width:48, height:48, borderRadius:'50%', background:primary, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, color:onPrimary, flexShrink:0 }}>▶</div>
           <div style={{ flex:1, textAlign:'left' }}>
-            <div style={{ fontSize:11, fontWeight:500, color:'#888', marginBottom:3 }}>Start here — 7 min</div>
-            <div style={{ fontWeight:700, fontSize:16, color:primary }}>Watch the Quick Start Video</div>
+            <div style={{ fontSize:11, fontWeight:500, color:'#888', marginBottom:3 }}>{hubContent.quickStart.tagline}</div>
+            <div style={{ fontWeight:700, fontSize:16, color:primary }}>{hubContent.quickStart.title}</div>
           </div>
           <div style={{ fontSize:20, color:primary, flexShrink:0 }}>→</div>
         </a>
@@ -222,12 +191,12 @@ export default function HubClient({ org }: { org: Org }) {
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
           <div style={{ padding:'20px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #F0EBE1' }}>
             <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontWeight:700, fontSize:22, color:primary, margin:0, fontStyle:'italic' }}>{hubLayout.onboarding.innerTitle || 'Before You Start'}</h2>
-            {!onboard.loading && <span style={{ fontSize:14, color:'#888' }}><strong style={{ color:primary }}>{onboard.doneCount}</strong> / {onboardTotal} done</span>}
+            {!onboard.loading && onboardTotal > 0 && <span style={{ fontSize:14, color:'#888' }}><strong style={{ color:primary }}>{onboard.doneCount}</strong> / {onboardTotal} done</span>}
           </div>
           {!onboard.loading && <>
-            {onboard.allDone && <CompletionBanner label="Onboarding complete! You're ready to go." onReset={onboard.reset} color={primary} textColor={onPrimary} />}
+            {onboard.allDone && <CompletionBanner label={hubContent.completionMessages.onboardComplete} onReset={onboard.reset} color={primary} textColor={onPrimary} />}
             <ul style={{ listStyle:'none', padding:0, margin:0 }}>
-              {onboardItems.map((item,i)=>(
+              {onboardResolved.map((item,i)=>(
                 <CheckItem key={i} label={item.label} sub={item.sub} link={item.link} checked={onboard.checked[i]} onToggle={()=>onboard.toggle(i)} brandColor={primary} brandTextColor={onPrimary} />
               ))}
             </ul>
@@ -240,13 +209,13 @@ export default function HubClient({ org }: { org: Org }) {
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
           <div style={{ padding:'20px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #F0EBE1' }}>
             <h2 style={{ fontWeight:700, fontSize:18, color:primary, margin:0 }}>{hubLayout.essentials.innerTitle || 'Checklist'}</h2>
-            {!essentials.loading && <span style={{ fontSize:14, color:'#888' }}><strong style={{ color:primary }}>{essentials.doneCount}</strong> / 3 done</span>}
+            {!essentials.loading && essentialsTotal > 0 && <span style={{ fontSize:14, color:'#888' }}><strong style={{ color:primary }}>{essentials.doneCount}</strong> / {essentialsTotal} done</span>}
           </div>
           {!essentials.loading && <>
-            {essentials.allDone && <CompletionBanner label="You've got everything you need!" onReset={essentials.reset} color={primary} textColor={onPrimary} />}
+            {essentials.allDone && <CompletionBanner label={hubContent.completionMessages.essentialsComplete} onReset={essentials.reset} color={primary} textColor={onPrimary} />}
             <ul style={{ listStyle:'none', padding:0, margin:0 }}>
-              {essItems.map((item,i)=>(
-                <CheckItem key={i} emoji={item.emoji} label={item.label} sub={item.sub} link={item.link} checked={essentials.checked[i]} onToggle={()=>essentials.toggle(i)} outlineBtn brandColor={primary} brandTextColor={onPrimary} />
+              {hubContent.essentials.map((item,i)=>(
+                <CheckItem key={i} emoji={item.emoji} label={item.label} sub={item.sub} link={item.linkUrl && item.linkText ? { href: item.linkUrl, text: item.linkText } : undefined} checked={essentials.checked[i]} onToggle={()=>essentials.toggle(i)} outlineBtn={item.outlineButton} brandColor={primary} brandTextColor={onPrimary} />
               ))}
             </ul>
           </>}
@@ -278,8 +247,8 @@ export default function HubClient({ org }: { org: Org }) {
 
         <SectionDivider label={hubLayout.guides.sectionTitle} id="mm-guides" />
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
-          {GUIDES.map((g,i)=>(
-            <a key={g.url} href={g.url} target="_blank" rel="noreferrer" style={{ display:'flex', alignItems:'center', gap:16, padding:'18px 24px', textDecoration:'none', borderBottom: i < GUIDES.length-1 ? '1px solid #F0EBE1' : 'none' }}>
+          {hubContent.guides.map((g,i)=>(
+            <a key={g.url + i} href={g.url} target="_blank" rel="noreferrer" style={{ display:'flex', alignItems:'center', gap:16, padding:'18px 24px', textDecoration:'none', borderBottom: i < hubContent.guides.length-1 ? '1px solid #F0EBE1' : 'none' }}>
               <span style={{ width:44, height:44, borderRadius:12, background:'#F5F1EA', display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, flexShrink:0 }}>{g.emoji}</span>
               <span style={{ flex:1, fontWeight:600, fontSize:15, color:primary }}>{g.name}</span>
               <span style={{ fontSize:16, color:'#888', flexShrink:0 }}>→</span>
@@ -290,8 +259,8 @@ export default function HubClient({ org }: { org: Org }) {
 
         <SectionDivider label={hubLayout.tips.sectionTitle} id="mm-tips" />
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
-          {TIPS.map((t,i)=>(
-            <a key={t.url} href={t.url} target="_blank" rel="noreferrer" style={{ display:'flex', alignItems:'center', gap:16, padding:'20px 24px', textDecoration:'none', borderBottom: i < TIPS.length-1 ? '1px solid #F0EBE1' : 'none' }}>
+          {hubContent.tips.map((t,i)=>(
+            <a key={t.url + i} href={t.url} target="_blank" rel="noreferrer" style={{ display:'flex', alignItems:'center', gap:16, padding:'20px 24px', textDecoration:'none', borderBottom: i < hubContent.tips.length-1 ? '1px solid #F0EBE1' : 'none' }}>
               <span style={{ width:44, height:44, borderRadius:12, background:'#F5F1EA', display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, flexShrink:0 }}>{t.emoji}</span>
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontWeight:600, fontSize:15, color:primary, marginBottom:2 }}>{t.title}</div>
@@ -304,18 +273,18 @@ export default function HubClient({ org }: { org: Org }) {
         <SectionActionButtons buttons={hubLayout.tips.buttons} primary={primary} onPrimary={onPrimary} />
 
         <SectionDivider label={hubLayout.dailyVideos.sectionTitle} id="mm-daily" />
-        <a href="https://hohdigitallibrary.com/nightbefore" target="_blank" rel="noreferrer"
+        <a href={hubContent.nightBefore.url} target="_blank" rel="noreferrer"
           style={{ background:primary, borderRadius:16, padding:'22px 24px', display:'flex', alignItems:'center', gap:18, textDecoration:'none', marginBottom:12 }}>
-          <span style={{ width:52, height:52, borderRadius:'50%', background:'rgba(255,255,255,0.1)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, flexShrink:0 }}>🌙</span>
+          <span style={{ width:52, height:52, borderRadius:'50%', background:'rgba(255,255,255,0.1)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, flexShrink:0 }}>{hubContent.nightBefore.emoji}</span>
           <div style={{ flex:1 }}>
-            <div style={{ fontSize:10, fontWeight:600, letterSpacing:'0.16em', textTransform:'uppercase', color:accent, marginBottom:4 }}>Start Here</div>
-            <div style={{ fontWeight:700, fontSize:17, color:onPrimary, marginBottom:4 }}>Night Before You Begin</div>
-            <div style={{ fontSize:13, color:`${onPrimary}88` }}>Prep your environment. Set expectations. Start clean.</div>
+            <div style={{ fontSize:10, fontWeight:600, letterSpacing:'0.16em', textTransform:'uppercase', color:accent, marginBottom:4 }}>{hubContent.nightBefore.tagline}</div>
+            <div style={{ fontWeight:700, fontSize:17, color:onPrimary, marginBottom:4 }}>{hubContent.nightBefore.title}</div>
+            <div style={{ fontSize:13, color:`${onPrimary}88` }}>{hubContent.nightBefore.sub}</div>
           </div>
           <span style={{ fontSize:18, color:onPrimary, flexShrink:0 }}>→</span>
         </a>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, marginBottom:16 }}>
-          {DAILY_VIDEOS.filter(v=>!v.isNight).map(v=>(
+          {hubContent.dailyVideoDays.map(v=>(
             <a key={v.url} href={v.url} target="_blank" rel="noreferrer" style={{ background:'#fff', border:'1px solid #E8E2D6', borderRadius:14, padding:'16px 14px', textDecoration:'none' }}>
               <div style={{ fontSize:10, fontWeight:600, letterSpacing:'0.12em', textTransform:'uppercase', color:'#888', marginBottom:6 }}>{v.day}</div>
               <div style={{ fontWeight:700, fontSize:14, color:primary }}>{v.label}</div>
@@ -343,39 +312,35 @@ export default function HubClient({ org }: { org: Org }) {
           <img src="https://tiggbprqgezztvcakpce.supabase.co/storage/v1/object/public/branding/optavia_logo.png" alt="OPTAVIA — Reorder" style={{ height:32, objectFit:'contain' }} />
         </a>
         <SectionActionButtons buttons={hubLayout.accountOrders.buttons} primary={primary} onPrimary={onPrimary} />
-        <Card icon="📦" title="How to Edit Your Order" sub="Important to know" brandColor={primary}>
+        <Card icon={hubContent.orderEdit.icon} title={hubContent.orderEdit.title} sub={hubContent.orderEdit.sub} brandColor={primary}>
           <div style={{ background:'#F5F1EA', borderRadius:12, padding:'14px 18px', fontSize:13, color:'#666', borderLeft:`3px solid ${primary}`, margin:'12px 0' }}>
-            📹 Watch the short video first —&nbsp;
-            <a href="https://vimeo.com/user20141625/updateorder" target="_blank" rel="noreferrer" style={{ color:primary, fontWeight:600 }}>Watch Order Update Video →</a>
+            {hubContent.orderEdit.calloutLead}&nbsp;
+            <a href={hubContent.orderEdit.videoUrl} target="_blank" rel="noreferrer" style={{ color:primary, fontWeight:600 }}>{hubContent.orderEdit.videoLinkText}</a>
           </div>
           <ol style={{ listStyle:'none', padding:0, margin:0 }}>
-            {[{t:'Log in at optavia.com',b:'Open your Account Dashboard. Temp password: Welcome1! (capital W + !)'},
-              {t:'Update your fuelings',b:'Remove the kit and add at least 20 individual boxes. Stay in the Optavia Essential line.'},
-              {t:'Optional add-ons',b:'Lifebook, Habits of Health, microwavable lean & green meals, hydration, snacks.'},
-              {t:'Stack your savings',b:'10% off over $250 · 15% off over $350'},
-            ].map((s,i)=>(
-              <li key={i} style={{ display:'flex', gap:14, padding:'12px 0', borderBottom:i<3?'1px solid #F0EBE1':'none', fontSize:14 }}>
+            {hubContent.orderEdit.steps.map((s,i)=>(
+              <li key={i} style={{ display:'flex', gap:14, padding:'12px 0', borderBottom:i<hubContent.orderEdit.steps.length-1?'1px solid #F0EBE1':'none', fontSize:14 }}>
                 <span style={{ width:26, height:26, background:primary, color:onPrimary, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, flexShrink:0 }}>{i+1}</span>
-                <div><strong style={{ display:'block', color:primary }}>{s.t}</strong><span style={{ color:'#888', fontSize:13 }}>{s.b}</span></div>
+                <div><strong style={{ display:'block', color:primary }}>{s.title}</strong><span style={{ color:'#888', fontSize:13 }}>{s.body}</span></div>
               </li>
             ))}
           </ol>
         </Card>
 
-        <Card icon="🎁" title="Share the Plan. Earn Credit." sub="Client Referral Program" id="mm-referral" brandColor={primary}>
+        <Card icon={hubContent.referral.icon} title={hubContent.referral.title} sub={hubContent.referral.sub} id="mm-referral" brandColor={primary}>
           <ol style={{ listStyle:'none', padding:0, margin:0 }}>
-            {['Find your link in the Client App and share it','Your friend must click your link first — before anything else','They complete the referral form through your link','Same email on the form must be used for their account','Account created after the form is submitted','Friend places their qualifying order','Order must ship before credit activates','Referral credit confirmed after shipment'].map((s,i)=>(
-              <li key={i} style={{ display:'flex', gap:14, padding:'12px 0', borderBottom:i<7?'1px solid #F0EBE1':'none', fontSize:14 }}>
+            {hubContent.referral.steps.map((s,i)=>(
+              <li key={i} style={{ display:'flex', gap:14, padding:'12px 0', borderBottom:i<hubContent.referral.steps.length-1?'1px solid #F0EBE1':'none', fontSize:14 }}>
                 <span style={{ width:26, height:26, background:primary, color:onPrimary, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, flexShrink:0 }}>{i+1}</span>
                 <span style={{ color:primary }}>{s}</span>
               </li>
             ))}
           </ol>
           <div style={{ marginTop:16 }}>
-            {['No link click = no credit','No form submission = no credit','Email mismatch = no credit'].map(w=>(
+            {hubContent.referral.warnings.map(w=>(
               <div key={w} style={{ display:'flex', gap:8, fontSize:13, color:'#888', padding:'4px 0' }}><span style={{ color:'#C43B3B', fontWeight:700 }}>✕</span>{w}</div>
             ))}
-            <div style={{ display:'flex', gap:8, fontSize:13, color:'#888', padding:'4px 0' }}><span style={{ color:'#5C6B3A', fontWeight:700 }}>✓</span>Credit applies after order ships, not when placed</div>
+            <div style={{ display:'flex', gap:8, fontSize:13, color:'#888', padding:'4px 0' }}><span style={{ color:'#5C6B3A', fontWeight:700 }}>✓</span>{hubContent.referral.successNote}</div>
           </div>
         </Card>
       </main>

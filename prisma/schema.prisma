@@ -21,6 +21,7 @@ model Organization {
   zoomRecordingsUrl  String?
   facebookUrl        String?
   hubSectionsJson    String? @db.Text // JSON hub section titles + buttons; see lib/hubLayout.ts
+  hubContentJson     String? @db.Text // JSON checklist/guides/body copy; see lib/hubContent.ts
 
   users             User[]
   checklistProgress ChecklistProgress[]
