@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import CoachManager from '@/components/CoachManager'
-import HubSectionsEditor from '@/components/HubSectionsEditor'
+import HubUnifiedEditor from '@/components/HubUnifiedEditor'
 import { createClient } from '@/lib/supabase/browser'
 import type { HubLayout } from '@/lib/hubLayout'
 import { parseHubLayout, serializeHubLayout } from '@/lib/hubLayout'
 import type { HubContent } from '@/lib/hubContent'
 import { parseHubContent, serializeHubContent } from '@/lib/hubContent'
-import HubContentEditor from '@/components/HubContentEditor'
 
 type AppUser = {
   role: string
@@ -325,42 +323,23 @@ export default function AdminPage() {
         </Section>
 
         <Section title="Client hub">
-          <p style={{ fontSize: 13, color: '#7A6E5C', marginTop: 0, marginBottom: 20, lineHeight: 1.5 }}>
-            Control what clients see on the hub page (<code style={{ fontSize: 12, background: '#F0E8D8', padding: '2px 6px', borderRadius: 4 }}>/org/{orgSlug}</code>).
-            <strong style={{ color: '#3E4A27' }}> Step 1</strong> sets labels, navigation, and extra buttons.
-            <strong style={{ color: '#3E4A27' }}> Step 2</strong> sets the copy, checklists, links, and videos inside each area.
+          <p style={{ fontSize: 13, color: '#7A6E5C', marginTop: 0, marginBottom: 16, lineHeight: 1.5 }}>
+            Each section below matches the hub in <strong style={{ color: '#3E4A27' }}>top-to-bottom order</strong>. Heading, buttons, and content are grouped together.
           </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <HubSubsection
-              step={1}
-              title="Structure & navigation"
-              subtitle="Same top-to-bottom order as the hub: nav → onboarding → essentials → Zoom meetings → guides → tips → daily videos → Watch This card → account."
-              accent={accent}
-              onAccent={onAccent}
-            >
-              <HubSectionsEditor
-                layout={hubLayout}
-                onChange={setHubLayout}
-                zoomCalls={zoomCalls}
-                onZoomCallChange={handleZoomCallChange}
-                onDeleteZoomCall={handleDeleteZoomCall}
-                onAddZoomCall={handleAddZoomCall}
-                zoomRecordingsUrl={config.zoomRecordingsUrl}
-                onZoomRecordingsUrlChange={url => setConfig({ ...config, zoomRecordingsUrl: url })}
-                accent={accent}
-                onAccent={onAccent}
-              />
-            </HubSubsection>
-            <HubSubsection
-              step={2}
-              title="Page content & links"
-              subtitle="Hero video, onboarding & essentials checklists, guides, tips, daily videos, account cards, and completion messages."
-              accent={accent}
-              onAccent={onAccent}
-            >
-              <HubContentEditor content={hubContent} onChange={setHubContent} />
-            </HubSubsection>
-          </div>
+          <HubUnifiedEditor
+            layout={hubLayout}
+            onLayoutChange={setHubLayout}
+            content={hubContent}
+            onContentChange={setHubContent}
+            zoomCalls={zoomCalls}
+            onZoomCallChange={handleZoomCallChange}
+            onDeleteZoomCall={handleDeleteZoomCall}
+            onAddZoomCall={handleAddZoomCall}
+            zoomRecordingsUrl={config.zoomRecordingsUrl}
+            onZoomRecordingsUrlChange={url => setConfig({ ...config, zoomRecordingsUrl: url })}
+            accent={accent}
+            onAccent={onAccent}
+          />
         </Section>
 
         <Section title="Facebook Group">
@@ -368,9 +347,6 @@ export default function AdminPage() {
             <input style={styles.input} value={config.facebookUrl} onChange={e => setConfig({ ...config, facebookUrl: e.target.value })} placeholder="https://www.facebook.com/groups/..." />
           </Field>
         </Section>
-
-        <CoachManager orgSlug={orgSlug} accent={accent} />
-
 
       </main>
 
@@ -393,71 +369,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     <div style={{ background: '#FDFAF4', border: '1px solid #E2D9C5', borderRadius: 16, padding: '28px 28px', marginBottom: 20, boxShadow: '0 2px 8px rgba(44,36,22,0.06)' }}>
       <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 600, color: '#2C2416', marginBottom: 20 }}>{title}</h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>{children}</div>
-    </div>
-  )
-}
-
-/** Groups hub layout vs hub body editors under one Client hub section. */
-function HubSubsection({
-  step,
-  title,
-  subtitle,
-  accent,
-  onAccent,
-  children,
-}: {
-  step: number
-  title: string
-  subtitle: string
-  accent: string
-  onAccent: string
-  children: React.ReactNode
-}) {
-  return (
-    <div
-      style={{
-        border: '1px solid #D8CDB8',
-        borderRadius: 14,
-        overflow: 'hidden',
-        background: '#FFFCF7',
-        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          gap: 14,
-          alignItems: 'flex-start',
-          padding: '16px 18px',
-          background: `linear-gradient(135deg, ${accent}14 0%, #F5EFE3 100%)`,
-          borderBottom: '1px solid #E2D9C5',
-        }}
-      >
-        <div
-          aria-hidden
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: 10,
-            background: accent,
-            color: onAccent,
-            fontSize: 16,
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-            fontFamily: "'DM Sans', sans-serif",
-          }}
-        >
-          {step}
-        </div>
-        <div style={{ minWidth: 0 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: '#2C2416', marginBottom: 6, letterSpacing: '-0.01em' }}>{title}</div>
-          <p style={{ fontSize: 12, color: '#6B6254', margin: 0, lineHeight: 1.5 }}>{subtitle}</p>
-        </div>
-      </div>
-      <div style={{ padding: '18px 18px 12px' }}>{children}</div>
     </div>
   )
 }

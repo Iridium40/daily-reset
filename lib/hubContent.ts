@@ -8,8 +8,6 @@ export type OnboardingItem = {
   sub?: string
   linkText?: string
   linkUrl?: string
-  /** When true, button uses org Facebook URL from admin; row hidden if URL empty. */
-  linkToFacebook?: boolean
 }
 
 export type EssentialItem = {
@@ -64,7 +62,7 @@ export const DEFAULT_HUB_CONTENT: HubContent = {
     { label: 'Write your WHYs', sub: 'Take a photo holding it and send to your coach' },
     { label: 'Take before photos', sub: 'Front, back, and side — you\'ll want these later' },
     { label: 'Download the Optavia app', sub: 'Recipes, reminders, and tracking', linkText: 'Get App', linkUrl: 'https://apps.apple.com/us/app/optavia/id1477201061' },
-    { label: 'Join the private Facebook group', sub: 'Introduce yourself so we can support you', linkText: 'Join →', linkToFacebook: true },
+    { label: 'Join the private Facebook group', sub: 'Introduce yourself so we can support you', linkText: 'Join →', linkUrl: 'https://www.facebook.com/groups/' },
   ],
   essentials: [
     { emoji: '🥩', label: 'Food Scale', sub: 'To weigh lean protein — essential.' },
@@ -160,7 +158,6 @@ function parseOnboarding(arr: unknown): OnboardingItem[] {
         sub: o.sub !== undefined ? clampStr(o.sub, 500) : undefined,
         linkText: o.linkText !== undefined ? clampStr(o.linkText, 80) : undefined,
         linkUrl: o.linkUrl !== undefined ? clampStr(o.linkUrl, 2048) : undefined,
-        linkToFacebook: o.linkToFacebook === true,
       }
     })
     .filter(Boolean) as OnboardingItem[]
@@ -263,25 +260,11 @@ export function serializeHubContent(c: HubContent): string {
   return JSON.stringify(c)
 }
 
-/** Resolve onboarding rows for display + checklist count (excludes Facebook row when no URL). */
-export function resolveOnboardingItems(items: OnboardingItem[], facebookUrl: string | null | undefined) {
-  const fb = facebookUrl?.trim() || ''
-  const resolved: { label: string; sub?: string; link?: { href: string; text: string } }[] = []
-  for (const item of items) {
-    if (item.linkToFacebook) {
-      if (!fb) continue
-      resolved.push({
-        label: item.label,
-        sub: item.sub,
-        link: { href: fb, text: item.linkText || 'Join →' },
-      })
-      continue
-    }
-    if (item.linkUrl && item.linkText) {
-      resolved.push({ label: item.label, sub: item.sub, link: { href: item.linkUrl, text: item.linkText } })
-      continue
-    }
-    resolved.push({ label: item.label, sub: item.sub })
-  }
-  return resolved
+/** Map onboarding rows to display format for the hub checklist. */
+export function resolveOnboardingItems(items: OnboardingItem[]) {
+  return items.map(item => ({
+    label: item.label,
+    sub: item.sub,
+    link: item.linkUrl && item.linkText ? { href: item.linkUrl, text: item.linkText } : undefined,
+  }))
 }

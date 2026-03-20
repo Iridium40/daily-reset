@@ -125,9 +125,7 @@ export default function HubClient({ org }: { org: Org }) {
   const accent  = org.accentColor  || '#C45A1A'
   const onPrimary = contrastText(primary)
   const onAccent  = contrastText(accent)
-  const fbUrl    = org.facebookUrl
-
-  const onboardResolved = useMemo(() => resolveOnboardingItems(hubContent.onboarding, fbUrl), [hubContent, fbUrl])
+  const onboardResolved = useMemo(() => resolveOnboardingItems(hubContent.onboarding), [hubContent])
   const onboardTotal = onboardResolved.length
   const essentialsTotal = hubContent.essentials.length
 
