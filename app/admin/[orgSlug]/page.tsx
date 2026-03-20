@@ -3,7 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import CoachManager from '@/components/CoachManager'
+import HubSectionsEditor from '@/components/HubSectionsEditor'
 import { createClient } from '@/lib/supabase/browser'
+import type { HubLayout } from '@/lib/hubLayout'
+import { parseHubLayout, serializeHubLayout } from '@/lib/hubLayout'
 
 type AppUser = {
   role: string
@@ -46,6 +49,7 @@ export default function AdminPage() {
   const [user,   setUser]   = useState<AppUser | null>(null)
   const [config, setConfig] = useState<OrgConfig | null>(null)
   const [zoomCalls, setZoomCalls] = useState<ZoomCall[]>([])
+  const [hubLayout, setHubLayout] = useState<HubLayout>(() => parseHubLayout(null))
   const [saving, setSaving]   = useState(false)
   const [saved,  setSaved]    = useState(false)
   const [error,  setError]    = useState('')
@@ -100,6 +104,7 @@ export default function AdminPage() {
           schedule: zc.schedule || '',
           meetingId: zc.meetingId || '',
         })))
+        setHubLayout(parseHubLayout(data.hubSectionsJson))
       })
       .catch(() => setError('Could not load org config.'))
   }, [orgSlug, authLoading])
@@ -112,7 +117,10 @@ export default function AdminPage() {
       const res = await fetch(`/api/orgs/${orgSlug}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(config),
+        body: JSON.stringify({
+          ...config,
+          hubSectionsJson: serializeHubLayout(hubLayout),
+        }),
       })
       if (!res.ok) throw new Error('Save failed')
 
@@ -292,6 +300,13 @@ export default function AdminPage() {
               Reset to Default
             </button>
           </div>
+        </Section>
+
+        <Section title="Client hub — sections & buttons">
+          <p style={{ fontSize: 13, color: '#7A6E5C', marginTop: 0, marginBottom: 8 }}>
+            Customize section labels and add optional action buttons (each opens in a new tab). Default content (checklists, guides, videos) stays the same; only titles and extra buttons change.
+          </p>
+          <HubSectionsEditor layout={hubLayout} onChange={setHubLayout} accent={accent} />
         </Section>
 
         <Section title="Community Zoom Calls">

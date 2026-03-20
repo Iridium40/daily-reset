@@ -20,6 +20,7 @@ model Organization {
   welcomeMessage     String? @db.Text
   zoomRecordingsUrl  String?
   facebookUrl        String?
+  hubSectionsJson    String? @db.Text // JSON hub section titles + buttons; see lib/hubLayout.ts
 
   users             User[]
   checklistProgress ChecklistProgress[]

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useServerChecklist } from '@/lib/useServerChecklist'
+import { parseHubLayout, type HubActionButton } from '@/lib/hubLayout'
 
 function contrastText(hex: string): string {
   const c = hex.replace('#', '')
@@ -20,6 +21,7 @@ export type Org = {
   id: string; slug: string; name: string
   primaryColor: string; accentColor: string; welcomeMessage: string | null
   zoomRecordingsUrl: string | null; facebookUrl: string | null
+  hubSectionsJson?: string | null
   zoomCalls: ZoomCall[]
 }
 
@@ -48,9 +50,24 @@ const TIPS = [
 ]
 
 function SectionDivider({ label, id }: { label: string; id?: string }) {
+  if (!label.trim()) return null
   return (
     <div id={id} style={{ margin:'48px 0 20px' }}>
       <span style={{ fontSize:10, fontWeight:600, letterSpacing:'0.2em', textTransform:'uppercase', color:'#7A6E5C' }}>{label}</span>
+    </div>
+  )
+}
+
+function SectionActionButtons({ buttons, primary, onPrimary }: { buttons: HubActionButton[]; primary: string; onPrimary: string }) {
+  if (!buttons.length) return null
+  return (
+    <div style={{ display:'flex', flexWrap:'wrap', gap:10, marginBottom:16 }}>
+      {buttons.map((b, i) => (
+        <a key={`${b.url}-${i}`} href={b.url} target="_blank" rel="noreferrer"
+          style={{ flex:'1 1 160px', textAlign:'center', background:primary, color:onPrimary, fontSize:14, fontWeight:600, padding:'12px 16px', borderRadius:8, textDecoration:'none' }}>
+          {b.label}
+        </a>
+      ))}
     </div>
   )
 }
@@ -111,6 +128,7 @@ function CheckItem({ emoji, label, sub, link, checked, onToggle, outlineBtn, bra
 
 export default function HubClient({ org }: { org: Org }) {
   const [isAdmin, setIsAdmin] = useState(false)
+  const hubLayout = useMemo(() => parseHubLayout(org.hubSectionsJson), [org.hubSectionsJson])
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -168,8 +186,8 @@ export default function HubClient({ org }: { org: Org }) {
 
       {/* NAV — top, dark, pill buttons */}
       <nav style={{ background:primary, display:'flex', justifyContent:'center', gap:8, padding:'14px 20px', flexWrap:'wrap' }}>
-        {[['#mm-daily','Daily Videos'],['#mm-guides','Guides'],['#mm-tips','Tips'],['https://www.coachingamplifier.com/client/recipes','Meal Planner'],['#mm-referral','Referral']].map(([href,label])=>(
-          <a key={href} href={href} target={href.startsWith('#') ? undefined : '_blank'} rel={href.startsWith('#') ? undefined : 'noreferrer'} style={{ padding:'8px 20px', fontSize:13, fontWeight:500, textDecoration:'none', color:onPrimary, borderRadius:8, border:`1px solid ${onPrimary}40`, background:'transparent', whiteSpace:'nowrap' }}>{label}</a>
+        {hubLayout.nav.map(item => (
+          <a key={item.href + item.label} href={item.href} target={item.href.startsWith('#') ? undefined : '_blank'} rel={item.href.startsWith('#') ? undefined : 'noreferrer'} style={{ padding:'8px 20px', fontSize:13, fontWeight:500, textDecoration:'none', color:onPrimary, borderRadius:8, border:`1px solid ${onPrimary}40`, background:'transparent', whiteSpace:'nowrap' }}>{item.label}</a>
         ))}
       </nav>
 
@@ -198,12 +216,12 @@ export default function HubClient({ org }: { org: Org }) {
 
       <main style={{ maxWidth:780, margin:'0 auto', padding:'56px 20px 80px' }}>
 
-        <SectionDivider label="Your Onboarding Checklist" />
+        <SectionDivider label={hubLayout.onboarding.sectionTitle} />
 
         {/* Onboarding */}
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
           <div style={{ padding:'20px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #F0EBE1' }}>
-            <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontWeight:700, fontSize:22, color:primary, margin:0, fontStyle:'italic' }}>Before You Start</h2>
+            <h2 style={{ fontFamily:"'Cormorant Garamond',serif", fontWeight:700, fontSize:22, color:primary, margin:0, fontStyle:'italic' }}>{hubLayout.onboarding.innerTitle || 'Before You Start'}</h2>
             {!onboard.loading && <span style={{ fontSize:14, color:'#888' }}><strong style={{ color:primary }}>{onboard.doneCount}</strong> / {onboardTotal} done</span>}
           </div>
           {!onboard.loading && <>
@@ -215,12 +233,13 @@ export default function HubClient({ org }: { org: Org }) {
             </ul>
           </>}
         </div>
+        <SectionActionButtons buttons={hubLayout.onboarding.buttons} primary={primary} onPrimary={onPrimary} />
 
         {/* Essentials */}
-        <SectionDivider label="Program Essentials — Have These Ready" />
+        <SectionDivider label={hubLayout.essentials.sectionTitle} />
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
           <div style={{ padding:'20px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #F0EBE1' }}>
-            <h2 style={{ fontWeight:700, fontSize:18, color:primary, margin:0 }}>Checklist</h2>
+            <h2 style={{ fontWeight:700, fontSize:18, color:primary, margin:0 }}>{hubLayout.essentials.innerTitle || 'Checklist'}</h2>
             {!essentials.loading && <span style={{ fontSize:14, color:'#888' }}><strong style={{ color:primary }}>{essentials.doneCount}</strong> / 3 done</span>}
           </div>
           {!essentials.loading && <>
@@ -232,9 +251,10 @@ export default function HubClient({ org }: { org: Org }) {
             </ul>
           </>}
         </div>
+        <SectionActionButtons buttons={hubLayout.essentials.buttons} primary={primary} onPrimary={onPrimary} />
 
-        {org.zoomCalls.length > 0 && (<>
-        <SectionDivider label="Community Zoom Calls" />
+        {(org.zoomCalls.length > 0 || org.zoomRecordingsUrl || hubLayout.communityZoom.buttons.length > 0) && (<>
+        <SectionDivider label={hubLayout.communityZoom.sectionTitle} />
         {org.zoomCalls.map(zc => (
           <div key={zc.id} style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
             <div style={{ padding:'28px 28px 24px' }}>
@@ -253,9 +273,10 @@ export default function HubClient({ org }: { org: Org }) {
         {org.zoomRecordingsUrl && (
           <a href={org.zoomRecordingsUrl} target="_blank" rel="noreferrer" style={{ background:'transparent', color:primary, border:`1px solid ${primary}33`, fontSize:15, fontWeight:600, padding:'14px 0', borderRadius:8, textDecoration:'none', textAlign:'center', display:'block', marginBottom:16 }}>Past Recordings</a>
         )}
+        <SectionActionButtons buttons={hubLayout.communityZoom.buttons} primary={primary} onPrimary={onPrimary} />
         </>)}
 
-        <SectionDivider label="Reference Guides" id="mm-guides" />
+        <SectionDivider label={hubLayout.guides.sectionTitle} id="mm-guides" />
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
           {GUIDES.map((g,i)=>(
             <a key={g.url} href={g.url} target="_blank" rel="noreferrer" style={{ display:'flex', alignItems:'center', gap:16, padding:'18px 24px', textDecoration:'none', borderBottom: i < GUIDES.length-1 ? '1px solid #F0EBE1' : 'none' }}>
@@ -265,8 +286,9 @@ export default function HubClient({ org }: { org: Org }) {
             </a>
           ))}
         </div>
+        <SectionActionButtons buttons={hubLayout.guides.buttons} primary={primary} onPrimary={onPrimary} />
 
-        <SectionDivider label="Metabolic Reset Tips" id="mm-tips" />
+        <SectionDivider label={hubLayout.tips.sectionTitle} id="mm-tips" />
         <div style={{ background:'#fff', borderRadius:16, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.06)', marginBottom:16 }}>
           {TIPS.map((t,i)=>(
             <a key={t.url} href={t.url} target="_blank" rel="noreferrer" style={{ display:'flex', alignItems:'center', gap:16, padding:'20px 24px', textDecoration:'none', borderBottom: i < TIPS.length-1 ? '1px solid #F0EBE1' : 'none' }}>
@@ -279,8 +301,9 @@ export default function HubClient({ org }: { org: Org }) {
             </a>
           ))}
         </div>
+        <SectionActionButtons buttons={hubLayout.tips.buttons} primary={primary} onPrimary={onPrimary} />
 
-        <SectionDivider label="Daily Videos" id="mm-daily" />
+        <SectionDivider label={hubLayout.dailyVideos.sectionTitle} id="mm-daily" />
         <a href="https://hohdigitallibrary.com/nightbefore" target="_blank" rel="noreferrer"
           style={{ background:primary, borderRadius:16, padding:'22px 24px', display:'flex', alignItems:'center', gap:18, textDecoration:'none', marginBottom:12 }}>
           <span style={{ width:52, height:52, borderRadius:'50%', background:'rgba(255,255,255,0.1)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, flexShrink:0 }}>🌙</span>
@@ -299,23 +322,27 @@ export default function HubClient({ org }: { org: Org }) {
             </a>
           ))}
         </div>
+        <SectionActionButtons buttons={hubLayout.dailyVideos.buttons} primary={primary} onPrimary={onPrimary} />
 
-        {/* Watch This — golden warm card */}
-        <a href="https://youtube.com/shorts/1P-KCIrQoEQ" target="_blank" rel="noreferrer"
+        {hubLayout.watchThis.sectionTitle.trim() ? <SectionDivider label={hubLayout.watchThis.sectionTitle} /> : null}
+        {/* Featured video card */}
+        <a href={hubLayout.watchThis.cardUrl || 'https://youtube.com/shorts/1P-KCIrQoEQ'} target="_blank" rel="noreferrer"
           style={{ background:'#FDF6E3', border:'1px solid #EDE0C0', borderRadius:16, padding:'22px 24px', display:'flex', alignItems:'center', gap:18, textDecoration:'none', marginBottom:16 }}>
           <span style={{ width:52, height:52, borderRadius:'50%', background:'#F5EDD6', display:'flex', alignItems:'center', justifyContent:'center', fontSize:22, flexShrink:0 }}>💡</span>
           <div style={{ flex:1 }}>
-            <div style={{ fontSize:10, fontWeight:600, letterSpacing:'0.16em', textTransform:'uppercase', color:accent, marginBottom:4 }}>Watch This</div>
-            <div style={{ fontWeight:600, fontSize:16, color:primary }}>Join the mission. Make an impact. Earn as you go.</div>
+            <div style={{ fontSize:10, fontWeight:600, letterSpacing:'0.16em', textTransform:'uppercase', color:accent, marginBottom:4 }}>{hubLayout.watchThis.cardTagline || 'Watch This'}</div>
+            <div style={{ fontWeight:600, fontSize:16, color:primary }}>{hubLayout.watchThis.cardTitle}</div>
           </div>
           <span style={{ fontSize:18, color:accent, flexShrink:0 }}>→</span>
         </a>
+        <SectionActionButtons buttons={hubLayout.watchThis.buttons} primary={primary} onPrimary={onPrimary} />
 
-        <SectionDivider label="Account & Orders" />
+        <SectionDivider label={hubLayout.accountOrders.sectionTitle} />
         <a href="https://www.optavia.com/us/en/" target="_blank" rel="noreferrer"
           style={{ display:'flex', alignItems:'center', justifyContent:'center', background:primary, padding:'14px 0', borderRadius:8, textDecoration:'none', marginBottom:16 }}>
           <img src="https://tiggbprqgezztvcakpce.supabase.co/storage/v1/object/public/branding/optavia_logo.png" alt="OPTAVIA — Reorder" style={{ height:32, objectFit:'contain' }} />
         </a>
+        <SectionActionButtons buttons={hubLayout.accountOrders.buttons} primary={primary} onPrimary={onPrimary} />
         <Card icon="📦" title="How to Edit Your Order" sub="Important to know" brandColor={primary}>
           <div style={{ background:'#F5F1EA', borderRadius:12, padding:'14px 18px', fontSize:13, color:'#666', borderLeft:`3px solid ${primary}`, margin:'12px 0' }}>
             📹 Watch the short video first —&nbsp;
