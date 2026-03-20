@@ -21,7 +21,6 @@ type OrgConfig = {
   accentColor:    string
   welcomeMessage: string
   zoomRecordingsUrl: string
-  facebookUrl:        string
 }
 
 type ZoomCall = {
@@ -96,7 +95,6 @@ export default function AdminPage() {
           accentColor:    data.accentColor    || '#C45A1A',
           welcomeMessage: data.welcomeMessage || "Watch the start video, grab the Zoom links, get your essentials, and use the Daily videos to stay consistent. Keep it simple. Don\u2019t overthink it. Just execute.",
           zoomRecordingsUrl: data.zoomRecordingsUrl || '',
-          facebookUrl:    data.facebookUrl    || '',
         })
         setZoomCalls((data.zoomCalls || []).map((zc: any) => ({
           id: zc.id,
@@ -340,12 +338,6 @@ export default function AdminPage() {
             accent={accent}
             onAccent={onAccent}
           />
-        </Section>
-
-        <Section title="Facebook Group">
-          <Field label="Private Facebook Group URL">
-            <input style={styles.input} value={config.facebookUrl} onChange={e => setConfig({ ...config, facebookUrl: e.target.value })} placeholder="https://www.facebook.com/groups/..." />
-          </Field>
         </Section>
 
       </main>

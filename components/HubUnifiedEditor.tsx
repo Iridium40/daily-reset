@@ -44,7 +44,7 @@ function Divider({ text }: { text: string }) {
   return <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#9E9484', marginTop: 22, marginBottom: 12, paddingBottom: 8, borderBottom: '1px solid #E8E2D6' }}>{text}</div>
 }
 
-function GroupedSection({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+function GroupedSection({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
     <div style={{ border: '1px solid #D8CDB8', borderRadius: 12, overflow: 'hidden', marginBottom: 14, background: '#FDFBF7' }}>

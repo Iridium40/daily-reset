@@ -67,9 +67,6 @@ export default function HubContentEditor({ content, onChange }: { content: HubCo
 
   return (
     <div>
-      <p style={{ fontSize: 12, color: '#7A6E5C', marginTop: 0, marginBottom: 16, lineHeight: 1.45 }}>
-        The Facebook onboarding row only appears if you set a <strong style={{ color: '#5C4A3A' }}>Facebook Group URL</strong> in the Facebook Group section below on this page.
-      </p>
 
       <Box title="Completion banners">
         <p style={sub}>Shown when a checklist is fully checked.</p>
