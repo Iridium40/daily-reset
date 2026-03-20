@@ -95,29 +95,12 @@ export default function HubContentEditor({ content, onChange }: { content: HubCo
             <input style={{ ...inp, marginBottom: 6 }} placeholder="Subtitle (optional)" value={row.sub || ''} onChange={e => {
               const onboarding = [...content.onboarding]; onboarding[i] = { ...row, sub: e.target.value }; set({ onboarding })
             }} />
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#5C4A3A', marginBottom: 6, cursor: 'pointer' }}>
-              <input type="checkbox" checked={!!row.linkToFacebook} onChange={e => {
-                const onboarding = [...content.onboarding]
-                onboarding[i] = { ...row, linkToFacebook: e.target.checked, linkUrl: e.target.checked ? undefined : row.linkUrl }
-                set({ onboarding })
-              }} />
-              Button uses Facebook Group URL (from admin settings)
-            </label>
-            {!row.linkToFacebook && (
-              <>
-                <input style={{ ...inp, marginBottom: 6 }} placeholder="Button label (e.g. Watch →)" value={row.linkText || ''} onChange={e => {
-                  const onboarding = [...content.onboarding]; onboarding[i] = { ...row, linkText: e.target.value }; set({ onboarding })
-                }} />
-                <input style={inp} placeholder="Button URL" value={row.linkUrl || ''} onChange={e => {
-                  const onboarding = [...content.onboarding]; onboarding[i] = { ...row, linkUrl: e.target.value }; set({ onboarding })
-                }} />
-              </>
-            )}
-            {row.linkToFacebook && (
-              <input style={{ ...inp, marginTop: 6 }} placeholder="Button label (e.g. Join →)" value={row.linkText || ''} onChange={e => {
-                const onboarding = [...content.onboarding]; onboarding[i] = { ...row, linkText: e.target.value }; set({ onboarding })
-              }} />
-            )}
+            <input style={{ ...inp, marginBottom: 6 }} placeholder="Button label (e.g. Watch →)" value={row.linkText || ''} onChange={e => {
+              const onboarding = [...content.onboarding]; onboarding[i] = { ...row, linkText: e.target.value }; set({ onboarding })
+            }} />
+            <input style={inp} placeholder="Button URL" value={row.linkUrl || ''} onChange={e => {
+              const onboarding = [...content.onboarding]; onboarding[i] = { ...row, linkUrl: e.target.value }; set({ onboarding })
+            }} />
             <button type="button" onClick={() => set({ onboarding: content.onboarding.filter((_, j) => j !== i) })} style={{ fontSize: 11, marginTop: 8, color: '#8B2942', background: 'none', border: '1px solid #E2D9C5', padding: '6px 10px', borderRadius: 6, cursor: 'pointer' }}>Remove step</button>
           </div>
         ))}
