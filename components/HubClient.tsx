@@ -37,10 +37,11 @@ function SectionDivider({ label, id }: { label: string; id?: string }) {
 }
 
 function SectionActionButtons({ buttons, primary, onPrimary }: { buttons: HubActionButton[]; primary: string; onPrimary: string }) {
-  if (!buttons.length) return null
+  const visible = buttons.filter(b => b.label.trim() && b.url.trim())
+  if (!visible.length) return null
   return (
     <div style={{ display:'flex', flexWrap:'wrap', gap:10, marginBottom:16 }}>
-      {buttons.map((b, i) => (
+      {visible.map((b, i) => (
         <a key={`${b.url}-${i}`} href={b.url} target="_blank" rel="noreferrer"
           style={{ flex:'1 1 160px', textAlign:'center', background:primary, color:onPrimary, fontSize:14, fontWeight:600, padding:'12px 16px', borderRadius:8, textDecoration:'none' }}>
           {b.label}
@@ -155,7 +156,7 @@ export default function HubClient({ org }: { org: Org }) {
 
       {/* NAV — top, dark, pill buttons */}
       <nav style={{ background:primary, display:'flex', justifyContent:'center', gap:8, padding:'14px 20px', flexWrap:'wrap' }}>
-        {hubLayout.nav.map(item => (
+        {hubLayout.nav.filter(item => item.label.trim() && item.href.trim()).map(item => (
           <a key={item.href + item.label} href={item.href} target={item.href.startsWith('#') ? undefined : '_blank'} rel={item.href.startsWith('#') ? undefined : 'noreferrer'} style={{ padding:'8px 20px', fontSize:13, fontWeight:500, textDecoration:'none', color:onPrimary, borderRadius:8, border:`1px solid ${onPrimary}40`, background:'transparent', whiteSpace:'nowrap' }}>{item.label}</a>
         ))}
       </nav>

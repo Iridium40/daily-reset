@@ -89,7 +89,8 @@ function sanitizeButton(b: unknown): HubActionButton | null {
   const o = b as Record<string, unknown>
   const label = typeof o.label === 'string' ? o.label.trim().slice(0, 120) : ''
   const url = typeof o.url === 'string' ? o.url.trim().slice(0, 2048) : ''
-  if (!label || !url) return null
+  // Keep draft rows that aren't fully filled yet (otherwise save + reload drops them silently).
+  if (!label && !url) return null
   return { label, url }
 }
 
@@ -98,7 +99,7 @@ function sanitizeNavItem(n: unknown): HubNavItem | null {
   const o = n as Record<string, unknown>
   const label = typeof o.label === 'string' ? o.label.trim().slice(0, 80) : ''
   const href = typeof o.href === 'string' ? o.href.trim().slice(0, 2048) : ''
-  if (!label || !href) return null
+  if (!label && !href) return null
   return { label, href }
 }
 
@@ -147,8 +148,13 @@ export function parseHubLayout(json: string | null | undefined): HubLayout {
   }
   const r = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {}
 
-  const navArr = Array.isArray(r.nav) ? r.nav.map(sanitizeNavItem).filter(Boolean) as HubNavItem[] : null
-  const nav = navArr && navArr.length > 0 ? navArr.slice(0, 12) : [...DEFAULT_HUB_LAYOUT.nav]
+  // Preserve explicit [] (cleared nav). Only substitute defaults when `nav` is missing or not an array.
+  let nav: HubNavItem[]
+  if (!Array.isArray(r.nav)) {
+    nav = [...DEFAULT_HUB_LAYOUT.nav]
+  } else {
+    nav = r.nav.map(sanitizeNavItem).filter((x): x is HubNavItem => x !== null).slice(0, 12)
+  }
 
   return {
     nav,

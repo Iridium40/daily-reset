@@ -199,11 +199,16 @@ function mergeHubContent(patch: unknown): HubContent {
 
   const ob = parseOnboarding(p.onboarding)
   const es = parseEssentials(p.essentials)
+  // If key is missing, fall back to defaults; if key is present (including []), keep that array.
+  const onboarding =
+    Array.isArray(p.onboarding) ? (ob.length ? ob : []) : ob.length ? ob : [...d.onboarding]
+  const essentials =
+    Array.isArray(p.essentials) ? (es.length ? es : []) : es.length ? es : [...d.essentials]
   return {
-    onboarding: ob.length ? ob : [...d.onboarding],
-    essentials: es.length ? es : [...d.essentials],
-    guides: Array.isArray(p.guides) && p.guides.length ? (p.guides as GuideRow[]).slice(0, 30) : [...d.guides],
-    tips: Array.isArray(p.tips) && p.tips.length ? (p.tips as TipRow[]).slice(0, 30) : [...d.tips],
+    onboarding,
+    essentials,
+    guides: Array.isArray(p.guides) ? (p.guides as GuideRow[]).slice(0, 30) : [...d.guides],
+    tips: Array.isArray(p.tips) ? (p.tips as TipRow[]).slice(0, 30) : [...d.tips],
     quickStart: {
       url: clampStr(quickStart.url, 2048) || d.quickStart.url,
       tagline: clampStr(quickStart.tagline, 120) || d.quickStart.tagline,
@@ -216,10 +221,9 @@ function mergeHubContent(patch: unknown): HubContent {
       sub: clampStr(nightBefore.sub, 500) || d.nightBefore.sub,
       url: clampStr(nightBefore.url, 2048) || d.nightBefore.url,
     },
-    dailyVideoDays:
-      Array.isArray(p.dailyVideoDays) && p.dailyVideoDays.length
-        ? (p.dailyVideoDays as DailyDay[]).slice(0, 30)
-        : [...d.dailyVideoDays],
+    dailyVideoDays: Array.isArray(p.dailyVideoDays)
+      ? (p.dailyVideoDays as DailyDay[]).slice(0, 30)
+      : [...d.dailyVideoDays],
     orderEdit: {
       title: clampStr(orderEdit.title, 200) || d.orderEdit.title,
       sub: clampStr(orderEdit.sub, 200) || d.orderEdit.sub,
@@ -227,7 +231,7 @@ function mergeHubContent(patch: unknown): HubContent {
       calloutLead: clampStr(orderEdit.calloutLead, 200) || d.orderEdit.calloutLead,
       videoUrl: clampStr(orderEdit.videoUrl, 2048) || d.orderEdit.videoUrl,
       videoLinkText: clampStr(orderEdit.videoLinkText, 120) || d.orderEdit.videoLinkText,
-      steps: Array.isArray(orderEdit.steps) && orderEdit.steps.length
+      steps: Array.isArray(orderEdit.steps)
         ? (orderEdit.steps as OrderStep[]).slice(0, 20)
         : [...d.orderEdit.steps],
     },
@@ -235,7 +239,7 @@ function mergeHubContent(patch: unknown): HubContent {
       title: clampStr(referral.title, 200) || d.referral.title,
       sub: clampStr(referral.sub, 200) || d.referral.sub,
       icon: clampStr(referral.icon, 8) || d.referral.icon,
-      steps: Array.isArray(referral.steps) && referral.steps.length ? (referral.steps as string[]).slice(0, 30) : [...d.referral.steps],
+      steps: Array.isArray(referral.steps) ? (referral.steps as string[]).slice(0, 30) : [...d.referral.steps],
       warnings: Array.isArray(referral.warnings) ? (referral.warnings as string[]).slice(0, 20) : [...d.referral.warnings],
       successNote: clampStr(referral.successNote, 300) || d.referral.successNote,
     },

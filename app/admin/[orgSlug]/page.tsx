@@ -128,21 +128,37 @@ export default function AdminPage() {
           hubContentJson: serializeHubContent(hubContent),
         }),
       })
-      if (!res.ok) throw new Error('Save failed')
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}))
+        throw new Error((errBody as { error?: string }).error || `Save failed (${res.status})`)
+      }
+
+      const orgData = await res.json()
+      setHubLayout(parseHubLayout(orgData.hubSectionsJson))
+      setHubContent(parseHubContent(orgData.hubContentJson))
 
       for (const zc of zoomCalls) {
         if (zc.id.startsWith('new-')) {
-          await fetch('/api/zoom-calls', {
+          if (!zc.title.trim() || !zc.zoomLink.trim()) continue
+          const zr = await fetch('/api/zoom-calls', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ orgSlug, title: zc.title, zoomLink: zc.zoomLink, passcode: zc.passcode, schedule: zc.schedule, meetingId: zc.meetingId }),
           })
+          if (!zr.ok) {
+            const errBody = await zr.json().catch(() => ({}))
+            throw new Error((errBody as { error?: string }).error || `Zoom meeting "${zc.title || 'new'}" could not be saved (${zr.status}). Title and join link are required.`)
+          }
         } else {
-          await fetch('/api/zoom-calls', {
+          const zr = await fetch('/api/zoom-calls', {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: zc.id, orgSlug, title: zc.title, zoomLink: zc.zoomLink, passcode: zc.passcode, schedule: zc.schedule, meetingId: zc.meetingId }),
           })
+          if (!zr.ok) {
+            const errBody = await zr.json().catch(() => ({}))
+            throw new Error((errBody as { error?: string }).error || `Could not update a Zoom meeting (${zr.status}).`)
+          }
         }
       }
 
@@ -154,8 +170,8 @@ export default function AdminPage() {
 
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
-    } catch {
-      setError('Save failed. Please try again.')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Save failed. Please try again.')
     } finally {
       setSaving(false)
     }
