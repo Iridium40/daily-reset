@@ -318,11 +318,22 @@ export default function AdminPage() {
             <HubSubsection
               step={1}
               title="Structure & navigation"
-              subtitle="Top nav, section headings, optional action buttons, and the cream 💡 “Watch This” / mission card (below daily videos — not the Quick Start hero at the top)."
+              subtitle="Same top-to-bottom order as the hub: nav → onboarding → essentials → Zoom meetings → guides → tips → daily videos → Watch This card → account."
               accent={accent}
               onAccent={onAccent}
             >
-              <HubSectionsEditor layout={hubLayout} onChange={setHubLayout} />
+              <HubSectionsEditor
+                layout={hubLayout}
+                onChange={setHubLayout}
+                zoomCalls={zoomCalls}
+                onZoomCallChange={handleZoomCallChange}
+                onDeleteZoomCall={handleDeleteZoomCall}
+                onAddZoomCall={handleAddZoomCall}
+                zoomRecordingsUrl={config.zoomRecordingsUrl}
+                onZoomRecordingsUrlChange={url => setConfig({ ...config, zoomRecordingsUrl: url })}
+                accent={accent}
+                onAccent={onAccent}
+              />
             </HubSubsection>
             <HubSubsection
               step={2}
@@ -334,38 +345,6 @@ export default function AdminPage() {
               <HubContentEditor content={hubContent} onChange={setHubContent} />
             </HubSubsection>
           </div>
-        </Section>
-
-        <Section title="Community Zoom Calls">
-          {zoomCalls.map((zc, idx) => (
-            <div key={zc.id} style={{ background: '#FDFBF7', border: '1px solid #E2D9C5', borderRadius: 12, padding: 20, marginBottom: 16, position: 'relative' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#3E4A27' }}>Zoom Call {idx + 1}</div>
-                <button onClick={() => handleDeleteZoomCall(zc.id)} style={{ fontSize: 11, fontWeight: 600, color: '#C45A1A', background: 'none', border: '1px solid #C45A1A33', padding: '4px 12px', borderRadius: 6, cursor: 'pointer' }}>Remove</button>
-              </div>
-              <Field label="Title">
-                <input style={styles.input} value={zc.title} onChange={e => handleZoomCallChange(zc.id, 'title', e.target.value)} placeholder="e.g. Monday Night Zoom" />
-              </Field>
-              <Field label="Zoom Join Link">
-                <input style={styles.input} value={zc.zoomLink} onChange={e => handleZoomCallChange(zc.id, 'zoomLink', e.target.value)} placeholder="https://zoom.us/j/..." />
-              </Field>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                <Field label="Meeting ID">
-                  <input style={styles.input} value={zc.meetingId} onChange={e => handleZoomCallChange(zc.id, 'meetingId', e.target.value)} placeholder="815 630 1595" />
-                </Field>
-                <Field label="Passcode">
-                  <input style={styles.input} value={zc.passcode} onChange={e => handleZoomCallChange(zc.id, 'passcode', e.target.value)} placeholder="abc123" />
-                </Field>
-              </div>
-              <Field label="Schedule Text">
-                <input style={styles.input} value={zc.schedule} onChange={e => handleZoomCallChange(zc.id, 'schedule', e.target.value)} placeholder="Every Monday 7pm CST · 8pm EST" />
-              </Field>
-            </div>
-          ))}
-          <button onClick={handleAddZoomCall} style={{ fontSize: 13, fontWeight: 600, color: onAccent, background: accent, border: `1px solid ${onAccent}33`, padding: '14px 0', borderRadius: 8, cursor: 'pointer', width: '100%', marginBottom: 16 }}>+ Add Zoom Call</button>
-          <Field label="Past Recordings URL (shared across all zoom calls)">
-            <input style={styles.input} value={config.zoomRecordingsUrl} onChange={e => setConfig({ ...config, zoomRecordingsUrl: e.target.value })} placeholder="https://docs.google.com/document/d/..." />
-          </Field>
         </Section>
 
         <Section title="Facebook Group">

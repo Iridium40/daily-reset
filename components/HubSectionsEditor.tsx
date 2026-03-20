@@ -81,6 +81,25 @@ function StandardBlock({
   )
 }
 
+/** Matches admin page zoom state; shown in hub after Essentials, before Guides. */
+export type AdminZoomCall = {
+  id: string
+  title: string
+  zoomLink: string
+  passcode: string
+  schedule: string
+  meetingId: string
+}
+
+function AdminField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7A6E5C', display: 'block', marginBottom: 6 }}>{label}</label>
+      {children}
+    </div>
+  )
+}
+
 function NavEditor({ nav, onChange }: { nav: HubNavItem[]; onChange: (n: HubNavItem[]) => void }) {
   return (
     <div style={{ background: '#FDFBF7', border: '1px solid #E2D9C5', borderRadius: 12, padding: 16, marginBottom: 14 }}>
@@ -105,7 +124,29 @@ function NavEditor({ nav, onChange }: { nav: HubNavItem[]; onChange: (n: HubNavI
   )
 }
 
-export default function HubSectionsEditor({ layout, onChange }: { layout: HubLayout; onChange: (l: HubLayout) => void }) {
+export default function HubSectionsEditor({
+  layout,
+  onChange,
+  zoomCalls,
+  onZoomCallChange,
+  onDeleteZoomCall,
+  onAddZoomCall,
+  zoomRecordingsUrl,
+  onZoomRecordingsUrlChange,
+  accent,
+  onAccent,
+}: {
+  layout: HubLayout
+  onChange: (l: HubLayout) => void
+  zoomCalls: AdminZoomCall[]
+  onZoomCallChange: (id: string, field: keyof AdminZoomCall, value: string) => void
+  onDeleteZoomCall: (id: string) => void
+  onAddZoomCall: () => void
+  zoomRecordingsUrl: string
+  onZoomRecordingsUrlChange: (url: string) => void
+  accent: string
+  onAccent: string
+}) {
   const setWatch = (w: HubWatchThisSection) => onChange({ ...layout, watchThis: w })
 
   return (
@@ -118,8 +159,56 @@ export default function HubSectionsEditor({ layout, onChange }: { layout: HubLay
       <StandardBlock title="Program essentials" section={layout.essentials} showInnerTitle innerTitleHint="Checklist card title"
         onChange={essentials => onChange({ ...layout, essentials })} />
 
-      <StandardBlock title="Community Zoom (section label only)" section={layout.communityZoom}
+      <StandardBlock title="Community Zoom — section label & buttons" section={layout.communityZoom}
         onChange={communityZoom => onChange({ ...layout, communityZoom })} />
+
+      <div style={{ background: '#F5F0E5', border: '1px solid #C4B896', borderRadius: 12, padding: 16, marginBottom: 14 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#3E4A27', marginBottom: 6 }}>Zoom meetings (live cards)</div>
+        <p style={{ fontSize: 12, color: '#5C5346', margin: '0 0 14px', lineHeight: 1.5 }}>
+          Same order as the client hub: these appear <strong>after Program Essentials</strong> and <strong>before Reference Guides</strong>. Past Recordings is a single link under all meetings.
+        </p>
+        {zoomCalls.map((zc, idx) => (
+          <div key={zc.id} style={{ background: '#FDFBF7', border: '1px solid #E2D9C5', borderRadius: 12, padding: 16, marginBottom: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#3E4A27' }}>Meeting {idx + 1}</div>
+              <button
+                type="button"
+                onClick={() => onDeleteZoomCall(zc.id)}
+                style={{ fontSize: 11, fontWeight: 600, color: '#C45A1A', background: 'none', border: '1px solid #C45A1A33', padding: '4px 12px', borderRadius: 6, cursor: 'pointer' }}
+              >
+                Remove
+              </button>
+            </div>
+            <AdminField label="Title">
+              <input style={inputStyle} value={zc.title} onChange={e => onZoomCallChange(zc.id, 'title', e.target.value)} placeholder="e.g. Monday Night Zoom" />
+            </AdminField>
+            <AdminField label="Zoom join link">
+              <input style={inputStyle} value={zc.zoomLink} onChange={e => onZoomCallChange(zc.id, 'zoomLink', e.target.value)} placeholder="https://zoom.us/j/..." />
+            </AdminField>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <AdminField label="Meeting ID">
+                <input style={inputStyle} value={zc.meetingId} onChange={e => onZoomCallChange(zc.id, 'meetingId', e.target.value)} placeholder="815 630 1595" />
+              </AdminField>
+              <AdminField label="Passcode">
+                <input style={inputStyle} value={zc.passcode} onChange={e => onZoomCallChange(zc.id, 'passcode', e.target.value)} placeholder="abc123" />
+              </AdminField>
+            </div>
+            <AdminField label="Schedule text">
+              <input style={inputStyle} value={zc.schedule} onChange={e => onZoomCallChange(zc.id, 'schedule', e.target.value)} placeholder="Every Monday 7pm CST · 8pm EST" />
+            </AdminField>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={onAddZoomCall}
+          style={{ fontSize: 13, fontWeight: 600, color: onAccent, background: accent, border: `1px solid ${onAccent}33`, padding: '14px 0', borderRadius: 8, cursor: 'pointer', width: '100%', marginBottom: 14 }}
+        >
+          + Add Zoom meeting
+        </button>
+        <AdminField label="Past recordings URL (shared)">
+          <input style={inputStyle} value={zoomRecordingsUrl} onChange={e => onZoomRecordingsUrlChange(e.target.value)} placeholder="https://docs.google.com/document/d/..." />
+        </AdminField>
+      </div>
 
       <StandardBlock title="Reference guides" section={layout.guides}
         onChange={guides => onChange({ ...layout, guides })} />
