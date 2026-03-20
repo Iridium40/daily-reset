@@ -1,6 +1,7 @@
-// app/hub/[orgSlug]/page.tsx
 // This is the public client-facing hub.
 // No login required — just visit /hub/[orgSlug]
+
+export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
