@@ -239,7 +239,7 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <main style={{ maxWidth: 680, margin: '0 auto', padding: '40px 24px' }}>
+      <main style={{ maxWidth: 760, margin: '0 auto', padding: '40px 24px' }}>
 
         {error && <div style={{ background: '#FDE8E8', border: '1px solid #C43B3B', borderRadius: 10, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#C43B3B' }}>{error}</div>}
         {saved && <div style={{ background: '#E8F4E8', border: '1px solid #5C6B3A', borderRadius: 10, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#3E4A27' }}>✓ Changes saved successfully!</div>}
@@ -308,15 +308,32 @@ export default function AdminPage() {
           </div>
         </Section>
 
-        <Section title="Client hub — sections & buttons">
-          <p style={{ fontSize: 13, color: '#7A6E5C', marginTop: 0, marginBottom: 8 }}>
-            Customize section labels and add optional action buttons (each opens in a new tab).
+        <Section title="Client hub">
+          <p style={{ fontSize: 13, color: '#7A6E5C', marginTop: 0, marginBottom: 20, lineHeight: 1.5 }}>
+            Control what clients see on the hub page (<code style={{ fontSize: 12, background: '#F0E8D8', padding: '2px 6px', borderRadius: 4 }}>/org/{orgSlug}</code>).
+            <strong style={{ color: '#3E4A27' }}> Step 1</strong> sets labels, navigation, and extra buttons.
+            <strong style={{ color: '#3E4A27' }}> Step 2</strong> sets the copy, checklists, links, and videos inside each area.
           </p>
-          <HubSectionsEditor layout={hubLayout} onChange={setHubLayout} />
-        </Section>
-
-        <Section title="Client hub — page content (checklists, guides, videos)">
-          <HubContentEditor content={hubContent} onChange={setHubContent} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <HubSubsection
+              step={1}
+              title="Structure & navigation"
+              subtitle="Top nav, section headings, optional action buttons on sections (each opens in a new tab), and the featured “Watch This” card."
+              accent={accent}
+              onAccent={onAccent}
+            >
+              <HubSectionsEditor layout={hubLayout} onChange={setHubLayout} />
+            </HubSubsection>
+            <HubSubsection
+              step={2}
+              title="Page content & links"
+              subtitle="Hero video, onboarding & essentials checklists, guides, tips, daily videos, account cards, and completion messages."
+              accent={accent}
+              onAccent={onAccent}
+            >
+              <HubContentEditor content={hubContent} onChange={setHubContent} />
+            </HubSubsection>
+          </div>
         </Section>
 
         <Section title="Community Zoom Calls">
@@ -381,6 +398,71 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     <div style={{ background: '#FDFAF4', border: '1px solid #E2D9C5', borderRadius: 16, padding: '28px 28px', marginBottom: 20, boxShadow: '0 2px 8px rgba(44,36,22,0.06)' }}>
       <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontWeight: 600, color: '#2C2416', marginBottom: 20 }}>{title}</h2>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>{children}</div>
+    </div>
+  )
+}
+
+/** Groups hub layout vs hub body editors under one Client hub section. */
+function HubSubsection({
+  step,
+  title,
+  subtitle,
+  accent,
+  onAccent,
+  children,
+}: {
+  step: number
+  title: string
+  subtitle: string
+  accent: string
+  onAccent: string
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      style={{
+        border: '1px solid #D8CDB8',
+        borderRadius: 14,
+        overflow: 'hidden',
+        background: '#FFFCF7',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          gap: 14,
+          alignItems: 'flex-start',
+          padding: '16px 18px',
+          background: `linear-gradient(135deg, ${accent}14 0%, #F5EFE3 100%)`,
+          borderBottom: '1px solid #E2D9C5',
+        }}
+      >
+        <div
+          aria-hidden
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 10,
+            background: accent,
+            color: onAccent,
+            fontSize: 16,
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            fontFamily: "'DM Sans', sans-serif",
+          }}
+        >
+          {step}
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#2C2416', marginBottom: 6, letterSpacing: '-0.01em' }}>{title}</div>
+          <p style={{ fontSize: 12, color: '#6B6254', margin: 0, lineHeight: 1.5 }}>{subtitle}</p>
+        </div>
+      </div>
+      <div style={{ padding: '18px 18px 12px' }}>{children}</div>
     </div>
   )
 }
