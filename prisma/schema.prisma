@@ -100,3 +100,118 @@ model CoachInvite {
 
   @@map("coach_invites")
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BOOKING & CLIENT MANAGEMENT (standalone, not org-scoped)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+enum BookingType {
+  IN_PERSON
+  VIRTUAL
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+// ─── COUNSELOR ────────────────────────────────────────────────────────────────
+model Counselor {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  zoomLink  String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  availability CounselorAvailability[]
+  bookings     Booking[]
+  sessionNotes SessionNote[]
+
+  @@map("counselors")
+}
+
+// ─── COUNSELOR AVAILABILITY ───────────────────────────────────────────────────
+// Recurring weekly windows. dayOfWeek: 0=Sunday .. 6=Saturday
+// startTime/endTime stored as "HH:MM" (24-hour) strings.
+model CounselorAvailability {
+  id          String @id @default(cuid())
+  counselorId String
+  dayOfWeek   Int // 0-6
+  startTime   String // "09:00"
+  endTime     String // "17:00"
+
+  counselor Counselor @relation(fields: [counselorId], references: [id], onDelete: Cascade)
+
+  @@map("counselor_availability")
+}
+
+// ─── CLIENT ───────────────────────────────────────────────────────────────────
+model Client {
+  id               String   @id @default(cuid())
+  name             String
+  email            String   @unique
+  phone            String
+  supabaseUserId   String?  @unique
+  stripeCustomerId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  bookings    Booking[]
+  hipaaIntake HipaaIntake?
+
+  @@map("clients")
+}
+
+// ─── BOOKING ──────────────────────────────────────────────────────────────────
+model Booking {
+  id                 String        @id @default(cuid())
+  clientId           String
+  counselorId        String
+  startsAt           DateTime
+  type               BookingType   @default(IN_PERSON)
+  status             BookingStatus @default(CONFIRMED)
+  donationAmountCents Int          @default(1000)
+  stripePaymentId    String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  client      Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  counselor   Counselor    @relation(fields: [counselorId], references: [id], onDelete: Cascade)
+  sessionNote SessionNote?
+
+  @@map("bookings")
+}
+
+// ─── SESSION NOTE ─────────────────────────────────────────────────────────────
+model SessionNote {
+  id           String   @id @default(cuid())
+  bookingId    String   @unique
+  counselorId  String
+  content      String   @db.Text
+  privateNotes String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  booking   Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  counselor Counselor @relation(fields: [counselorId], references: [id], onDelete: Cascade)
+
+  @@map("session_notes")
+}
+
+// ─── HIPAA INTAKE ─────────────────────────────────────────────────────────────
+model HipaaIntake {
+  id          String    @id @default(cuid())
+  clientId    String    @unique
+  token       String    @unique @default(cuid())
+  formData    String?   @db.Text
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("hipaa_intakes")
+}
