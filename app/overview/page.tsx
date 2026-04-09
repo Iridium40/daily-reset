@@ -21,6 +21,7 @@ export default function OverviewPage() {
       ` }} />
 
       <Hero />
+      <VideoSection />
       <ComparisonSection />
       <ClinicalData />
       <WhatMakesThisDifferent />
@@ -57,6 +58,37 @@ function Hero() {
         See the Plan Structure
       </a>
     </header>
+  )
+}
+
+/* ════════════════════════════════════════════════════════════════════════════ */
+/*  VIDEO SECTION                                                             */
+/* ════════════════════════════════════════════════════════════════════════════ */
+
+function VideoSection() {
+  return (
+    <section style={{ maxWidth: 900, margin: '0 auto', padding: '48px 24px 0' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+        <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.1)', aspectRatio: '16/9' }}>
+          <iframe
+            src="https://www.youtube.com/embed/21HfzQ31T84?start=2"
+            title="Video 1"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+          />
+        </div>
+        <div style={{ borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,0,0.1)', aspectRatio: '16/9' }}>
+          <iframe
+            src="https://www.youtube.com/embed/DiuaSfPSzzc"
+            title="Video 2"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+          />
+        </div>
+      </div>
+    </section>
   )
 }
 
