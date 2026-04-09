@@ -39,6 +39,7 @@ const emptyButtons: HubActionButton[] = []
 
 export const DEFAULT_HUB_LAYOUT: HubLayout = {
   nav: [
+    { label: 'Overview', href: '/overview' },
     { label: 'Daily Videos', href: '#mm-daily' },
     { label: 'Guides', href: '#mm-guides' },
     { label: 'Tips', href: '#mm-tips' },
